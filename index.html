@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <!--Set visual viewport size for mobile devices to the device size,
+            witch results in a scale of 1 and a 1:1 mapping between CSS pixels
+            and Qt device independent pixels. -->
+
+        <title>Canonic | QML Web Browser</title>
+        <meta name="viewport" content="width=device-width, height=device-height, user-scalable=0" />
+        <meta name="description" content="Canonic is a free and open-source web browser for QML content."/>
+        <link rel="icon" href="/icon.svg" type="image/svg+xml">
+        <style>
+            /* Make the html body cover the entire (visual) viewport with no scroll bars. */
+            html {
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+                height: 100vh;
+                background-color: #16181d;
+                color: white;
+                font-family: "Montserrat", sans-serif;
+                font-weight: 300;
+            }
+            body {
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+                height: 100vh;
+                background-color: #16181d;
+                color: white;
+                font-family: "Montserrat", sans-serif;
+                font-weight: 300;
+            }
+            /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+            canvas {
+                border: 0px none;
+                background-color: #16181d;
+                height: 100%;
+                width: 100%;
+            }
+            /* The contenteditable property is set to true for the canvas in order to support
+            clipboard events. Hide the resulting focus frame and set the cursor back to
+            the default cursor. */
+            canvas {
+                outline: 0px solid transparent;
+                caret-color: transparent;
+                cursor: default;
+            }
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+            @font-face {
+                font-family: Garnet-Capitals-Bold;
+                src: url("assets/fonts/Garnet-Capitals-Bold.woff"), url("assets/fonts/Garnet-Capitals-Bold.woff") format("woff");
+            }
+            @font-face {
+                font-family: Garnet-Capitals-Light;
+                src: url("assets/assets/fonts/Garnet-Capitals-Light.woff"), url("assets/fonts/Garnet-Capitals-Light.woff") format("woff");
+            }
+        </style>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
+    </head>
+    <body onload="init()">
+        <figure
+            style="overflow: hidden; width: 100%; height: 100%; margin: 0; padding: 0; position: absolute; display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity 1s; background-color: #16181d;"
+            id="qtspinner"
+        >
+            <center style="line-height: 150%;">
+                <!--<img src="qtlogo.svg" width="320" height="200" style="display:block"></img>-->
+                <div>
+                    <div style="font-family: 'Garnet-Capitals-Bold'; font-size: 63px; text-transform: capitalize; margin-bottom: 27px;">CANONIC</div>
+                    <div style="display: flex; justify-content: center; trasition: width 1s;">
+                        <div style="color: #e9e9e9;" id="qtstatus">Loading WebAssembly Browser</div>
+                        <div style="animation: spin 1.5s linear infinite; color: #15e888; margin-left: 12px;">🔾</div>
+                    </div>
+                </div>
+                <!-- <div id="qtstatus" style="color: #d1d1d1;font-size: 12px;">&nbsp</div> -->
+                <noscript>JavaScript is disabled. Please enable JavaScript to use this application. </noscript>
+            </center>
+        </figure>
+        <canvas id="qtcanvas" oncontextmenu="event.preventDefault()" contenteditable="true"> </canvas>
+        <script type="text/javascript">
+            var spinner = document.querySelector("#qtspinner");
+            var canvas = document.querySelector("#qtcanvas");
+            var simulateEventsTimer;
+
+            function hideSpinner() {
+                spinner.style.opacity = 0;
+                spinner.style.pointerEvents = "none";
+                clearTimeout(simulateEventsTimer);
+            }
+
+            function simulateEvent() {
+                console.log("simulateevent <do nothing>")
+
+                // There is a bug in qt wasm and this gets around it
+                // Nothing displays / updates until an event is triggered
+                canvas.dispatchEvent(new KeyboardEvent("keydown", {
+                   key: "e",
+                   keyCode: 69,
+                   code: "KeyE",
+                   which: 69,
+                   shiftKey: false,
+                   ctrlKey: false,
+                   metaKey: false
+                }));
+
+                simulateEventsTimer = setTimeout(simulateEvent, 200);
+            }
+
+            function getInitialUrl() {
+                var fragment = window.location.hash
+                var initialUrl = ""
+
+                // Strip the leading '#'
+                if(fragment[0] === '#')
+                {
+                    fragment = fragment.substring(1)
+
+                    // Strip the leading '!' (used for SEO)
+                    if(fragment[0] === '!')
+                    {
+                        fragment = fragment.substring(1)
+                    }
+                }
+
+                if(fragment)
+                {
+                    initialUrl = fragment
+                }
+
+                return initialUrl
+            }
+
+            function init() {
+                var status = document.querySelector("#qtstatus");
+                var qtLoader = QtLoader({
+                    canvasElements: [canvas],
+
+                    environment: { "CANONIC_INITIAL_URL": getInitialUrl() },
+
+                    showLoader: function (loaderStatus) {
+                        spinner.style.display = "flex";
+                        canvas.style.display = "none";
+                        status.innerHTML = loaderStatus + "...";
+                    },
+                    showError: function (errorText) {
+                        status.innerHTML = errorText;
+                        spinner.style.display = "flex";
+                        canvas.style.display = "none";
+                    },
+                    showExit: function () {
+                        status.innerHTML = "Application exit";
+                        if (qtLoader.exitCode !== undefined) status.innerHTML += " with code " + qtLoader.exitCode;
+                        if (qtLoader.exitText !== undefined) status.innerHTML += " (" + qtLoader.exitText + ")";
+                        spinner.style.display = "flex";
+                        canvas.style.display = "none";
+                    },
+                    showCanvas: function () {
+                        canvas.style.display = "block";
+                        simulateEventsTimer = setTimeout(simulateEvent, 200);
+                    },
+
+                    progressHandler: function(loadedBytes, totalBytes)
+                    {
+                        if (qtLoader.status === "Loading")
+                        {
+                            var percentage = Math.round(loadedBytes/totalBytes*100)
+                            if(percentage > 100)
+                            {
+                                percentage = 100
+                            }
+
+                            if(percentage < 0)
+                            {
+                                percentage = 0
+                            }
+
+                            status.innerHTML = "Downloading & Compiling (" + percentage + "%)";
+                        }
+                    }
+                });
+
+                var localStorage = window.localStorage;
+                var canonic_build = localStorage.getItem('canonic-build');
+
+                if(canonic_build === null)
+                {
+                    canonic_build = 'release'
+                }
+
+                qtLoader.loadEmscriptenModule('canonic.' + canonic_build);
+            }
+            window.canonic = new Object();
+            window.canonic.__hideSpinner = hideSpinner
+
+            window.onhashchange = function() {
+                window.location.reload()
+            }
+        </script>
+        <script type="text/javascript" src="qtloader.js"></script>
+    </body>
+</html>

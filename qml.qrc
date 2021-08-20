@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/images/grid_tile.png</file>
+        <file>assets/images/uncommitted_background.png</file>
+        <file>qml/AddressBar.qml</file>
+        <file>qml/RawSourceView.qml</file>
+        <file>qml/JSONFileView.qml</file>
+        <file>qml/MainUI.qml</file>
+        <file>qml/AuthComponent.qml</file>
+        <file>qml/MainUIQQuick.qml</file>
+        <file>qml/MainUIQWidget.qml</file>
+        <file>qml/QMLDocumentView.qml</file>
+        <file>assets/images/spinner-256px.png</file>
+        <file>assets/icons/icon.svg</file>
+        <file>qml/DebugView.qml</file>
+        <file>qml/HTMLDocumentView.qml</file>
+        <file>qml/NetworkErrorView.qml</file>
+    </qresource>
+</RCC>
