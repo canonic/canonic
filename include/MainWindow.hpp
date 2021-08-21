@@ -49,10 +49,10 @@ class MainWindow: public QObject
 
     QQmlListProperty<View> views();
     void appendView(View *view);
-    int viewCount() const;
-    View *view(int index) const;
+    qsizetype viewCount() const;
+    View *view(qsizetype index) const;
     void clearViews();
-    void replaceView(int index, View *view);
+    void replaceView(qsizetype index, View *view);
     void removeLastView();
     const QVector<View *> &getViews() const;
 
@@ -63,10 +63,10 @@ class MainWindow: public QObject
 
     QQmlListProperty<HistoryItem> historyItems();
     void appendToHistoryItem(HistoryItem *historyItem);
-    int historyItemsCount() const;
-    HistoryItem *historyItem(int index) const;
+    qsizetype historyItemsCount() const;
+    HistoryItem *historyItem(qsizetype index) const;
     void clearHistoryItems();
-    void replaceHistoryItems(int index, HistoryItem *historyItem);
+    void replaceHistoryItems(qsizetype index, HistoryItem *historyItem);
     void removeLastHistoryItem();
 
     short getHistoryIndex() const;
@@ -150,17 +150,17 @@ class MainWindow: public QObject
 
   //protected:
     static void appendView(QQmlListProperty<View>*, View*);
-    static int viewCount(QQmlListProperty<View>*);
-    static View* view(QQmlListProperty<View>*, int);
+    static qsizetype viewCount(QQmlListProperty<View>*);
+    static View* view(QQmlListProperty<View>*, qsizetype);
     static void clearViews(QQmlListProperty<View>*);
-    static void replaceView(QQmlListProperty<View>*, int, View*);
+    static void replaceView(QQmlListProperty<View>*, qsizetype, View*);
     static void removeLastView(QQmlListProperty<View>*);
 
     static void appendToHistoryItem(QQmlListProperty<HistoryItem>*, HistoryItem*);
-    static int historyItemsCount(QQmlListProperty<HistoryItem>*);
-    static HistoryItem* historyItem(QQmlListProperty<HistoryItem>*, int);
+    static qsizetype historyItemsCount(QQmlListProperty<HistoryItem>*);
+    static HistoryItem* historyItem(QQmlListProperty<HistoryItem>*, qsizetype);
     static void clearHistoryItems(QQmlListProperty<HistoryItem>*);
-    static void replaceHistoryItems(QQmlListProperty<HistoryItem>*, int, HistoryItem*);
+    static void replaceHistoryItems(QQmlListProperty<HistoryItem>*, qsizetype, HistoryItem*);
     static void removeLastHistoryItem(QQmlListProperty<HistoryItem>*);
 
     NetworkAccessManagerFactory* m_networkAccessManagerFactory;

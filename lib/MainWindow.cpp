@@ -70,12 +70,12 @@ void MainWindow::appendView(View *view)
     emit this->viewsChanged();
 }
 
-int MainWindow::viewCount() const
+qsizetype MainWindow::viewCount() const
 {
     return this->m_views.count();
 }
 
-View *MainWindow::view(int index) const
+View *MainWindow::view(qsizetype index) const
 {
     return this->m_views.at(index);
 }
@@ -88,7 +88,7 @@ void MainWindow::clearViews()
     }
 }
 
-void MainWindow::replaceView(int index, View *view)
+void MainWindow::replaceView(qsizetype index, View *view)
 {
     this->m_views[index]->deleteLater();
     this->m_views[index] = view;
@@ -136,12 +136,12 @@ void MainWindow::appendToHistoryItem(HistoryItem *historyItem)
     emit this->historyItemsChanged();
 }
 
-int MainWindow::historyItemsCount() const
+qsizetype MainWindow::historyItemsCount() const
 {
     return this->m_history.count();
 }
 
-HistoryItem *MainWindow::historyItem(int index) const
+HistoryItem *MainWindow::historyItem(qsizetype index) const
 {
     return this->m_history.at(index);
 }
@@ -154,7 +154,7 @@ void MainWindow::clearHistoryItems()
     }
 }
 
-void MainWindow::replaceHistoryItems(int index, HistoryItem *historyItem)
+void MainWindow::replaceHistoryItems(qsizetype index, HistoryItem *historyItem)
 {
     this->m_history[index]->deleteLater();
     this->m_history[index] = historyItem;
@@ -174,11 +174,11 @@ void MainWindow::appendView(QQmlListProperty<View>* list, View* p) {
     reinterpret_cast< MainWindow* >(list->data)->appendView(p);
 }
 
-int MainWindow::viewCount(QQmlListProperty<View>* list) {
+qsizetype MainWindow::viewCount(QQmlListProperty<View>* list) {
     return reinterpret_cast< MainWindow* >(list->data)->viewCount();
 }
 
-View* MainWindow::view(QQmlListProperty<View>* list, int i) {
+View* MainWindow::view(QQmlListProperty<View>* list, qsizetype i) {
     return reinterpret_cast< MainWindow* >(list->data)->view(i);
 }
 
@@ -186,7 +186,7 @@ void MainWindow::clearViews(QQmlListProperty<View>* list) {
     reinterpret_cast< MainWindow* >(list->data)->clearViews();
 }
 
-void MainWindow::replaceView(QQmlListProperty<View> *list, int i, View *p)
+void MainWindow::replaceView(QQmlListProperty<View> *list, qsizetype i, View *p)
 {
     reinterpret_cast< MainWindow* >(list->data)->replaceView(i, p);
 }
@@ -200,11 +200,11 @@ void MainWindow::appendToHistoryItem(QQmlListProperty<HistoryItem>* list, Histor
     reinterpret_cast< MainWindow* >(list->data)->appendToHistoryItem(historyItem);
 }
 
-int MainWindow::historyItemsCount(QQmlListProperty<HistoryItem>* list) {
+qsizetype MainWindow::historyItemsCount(QQmlListProperty<HistoryItem>* list) {
     return reinterpret_cast< MainWindow* >(list->data)->historyItemsCount();
 }
 
-HistoryItem *MainWindow::historyItem(QQmlListProperty<HistoryItem>* list, int i) {
+HistoryItem *MainWindow::historyItem(QQmlListProperty<HistoryItem>* list, qsizetype i) {
     return reinterpret_cast< MainWindow* >(list->data)->historyItem(i);
 }
 
@@ -212,7 +212,7 @@ void MainWindow::clearHistoryItems(QQmlListProperty<HistoryItem>* list) {
     reinterpret_cast< MainWindow* >(list->data)->clearHistoryItems();
 }
 
-void MainWindow::replaceHistoryItems(QQmlListProperty<HistoryItem>* list, int i, HistoryItem *historyItem) {
+void MainWindow::replaceHistoryItems(QQmlListProperty<HistoryItem>* list, qsizetype i, HistoryItem *historyItem) {
     reinterpret_cast< MainWindow* >(list->data)->replaceHistoryItems(i, historyItem);
 }
 
