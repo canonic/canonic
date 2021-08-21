@@ -56,70 +56,24 @@ void URISyntaxHighlighter::highlightBlock( const QString &text )
 {
     setFormat(0, text.length(), defaultFormat);
 
-    QString metaScheme = "meta:";
-    int textLength = text.length();
-    int currectPos = 0;
-    if (text.startsWith(metaScheme))
+    if(!this->isFocused())
     {
-        setFormat(currectPos, metaScheme.length(), metaSchemeFormat);
-        currectPos += metaScheme.length();
+        QUrl url{text};
+        QString authority = url.authority();
 
-        if(textLength > metaScheme.length()){
-            QStringRef subString(&text, currectPos, textLength - currectPos);
-
-            QString method = "compare";
-            int methodLength = method.length();
-            if(subString.startsWith(method))
-            {
-                setFormat(currectPos,
-                    methodLength,
-                    this->isFocused()?metaMethodFormatFocused : metaMethodFormat);
-
-                currectPos += methodLength;
-                subString = QStringRef(&text, currectPos, textLength - currectPos);
-
-                QString subMethod = " category";
-                int subMethodLength = subMethod.length();
-
-                if(subString.startsWith(subMethod))
-                {
-                    setFormat(currectPos,
-                        subMethodLength,
-                        this->isFocused()?metaSubMethodFormatFocused : metaSubMethodFormat);
-
-                    currectPos += subMethodLength;
-                    subString = QStringRef(&text, currectPos, textLength - currectPos);
-
-                    if (subString.startsWith(" "))
-                    {
-                        setFormat(currectPos,
-                            subString.length(),
-                            this->isFocused()?metaCategoryFormatFocused : metaCategoryFormat);
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        if(!this->isFocused())
+        if(!authority.isEmpty())
         {
-            QUrl url{text};
-            QString authority = url.authority();
-
-            if(!authority.isEmpty())
+            int start = text.indexOf(authority);
+            if(start >= 0)
             {
-                int start = text.indexOf(authority);
-                if(start >= 0)
-                {
-                    setFormat(start, authority.length(), highlightFormat);
-                    return;
-                }
+                setFormat(start, authority.length(), highlightFormat);
+                return;
             }
         }
-
-        setFormat(0, text.length(), highlightFormat);
     }
+
+    setFormat(0, text.length(), highlightFormat);
+
 }
 
 QQuickTextDocument* URISyntaxHighlighter::textDocument() const
