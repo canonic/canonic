@@ -5,6 +5,7 @@ import com.mycompany.qmlcomponents 1.0
 
 // Unused import statements included so that the modules are packaged for production
 import QtQuick.Particles 2.15
+import QtQuick3D
 
 Metonym.ThemedItem {
     id: root

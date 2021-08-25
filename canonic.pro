@@ -1,5 +1,6 @@
 QT += gui
 QT += quick
+QT += quick3d
 QT += websockets
 
 

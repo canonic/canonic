@@ -25,6 +25,8 @@
 */
 
 #include <QGuiApplication>
+#include <QtQuick3D/qquick3d.h>
+
 #include "include/QQuickMainWindow.hpp"
 #include "include/Window.hpp"
 
