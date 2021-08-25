@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtGraphicalEffects 1.15
 import QtQuick.Controls 2.15 as QtControls
 import QtQuick.Window 2.15 as QtWindow
 import 'https://www.canonic.com/metonym/release/Metonym/' 0.1 as Metonym

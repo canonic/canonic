@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.12
-import QtGraphicalEffects 1.15
+import Qt5Compat.GraphicalEffects as QtGraphicalEffects
 import Meta 1.0
 import 'https://www.canonic.com/metonym/release/Metonym/' 0.1 as Metonym
 import com.mycompany.qmlcomponents 1.0
@@ -55,7 +55,7 @@ Metonym.ThemedItem {
                 onTriggered: addressBarTextField.selectAll()
             }
 
-            Glow {
+            QtGraphicalEffects.Glow {
                 id: __borderGlow
 
                 anchors.fill: __addressBarRect
@@ -72,7 +72,6 @@ Metonym.ThemedItem {
                     }
                 }
 
-                samples: 16
                 spread: 0.3
                 source: __addressBarRect
                 visible: true
