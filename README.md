@@ -11,6 +11,17 @@ https://github.com/jacob3141/methane
 mkdir qt
 cd qt
 
+## First build Qt for the host
+Since Qt 6 cross compiling requires that you first install qt on your host system
+
+mkdir build_host
+cd build_host
+../qt-everywhere-src-6.2.0-beta3/configure -opensource -nomake examples -prefix $PWD/qtbase
+cmake --build . --parallel
+
+Note: skip the --parallel if you run out of ram
+
+
 git clone git://code.qt.io/qt/qt5.git
 cd qt5
 git checkout 5.15 (not 5.15.0 or 5.15.1 or 5.15.2)
@@ -20,9 +31,10 @@ cd ..
 mkdir build
 cd build
 
-../qt5/configure -xplatform wasm-emscripten -opensource -nomake examples -prefix $PWD/qtbase
-make module-qtbase module-qtdeclarative module-qtquickcontrols2 module-qtwebsockets module-qtsvg module-qtcharts module-qtmqtt
+You can also grab the sources from https://download.qt.io/development_releases/qt/ if you do not want to use the git version
 
+../qt-everywhere-src-6.2.0-beta3/configure -qt-host-path /mnt/s/qt/build_host/qtbase -xplatform wasm-emscripten -opensource -nomake examples -prefix $PWD/qtbase
+cmake --build . -t qtbase -t qtdeclarative -t qt5compat -t qtquick3d -t qtimageformats -t qtshadertools -t qtwebsockets -t qtsvg -t qtmqtt
 
 note the `module-qtmqtt` package did not work for me the second time so maybe leave it out
 note: add `-debug` to the configure step for a debug build
