@@ -325,7 +325,13 @@ void MainWindow::mainUILoaded() const
 {
 #ifdef Q_OS_WASM
     EM_ASM(
-        window.canonic.__hideSpinner()
+        if(window.canonic === undefined)
+        {
+            console.error("window.canonic is undefined. Are you running in a dev enironment?")
+        }
+        else {
+            window.canonic.__hideSpinner()
+        }
     );
 #endif
 }
