@@ -25,6 +25,7 @@ SOURCES += \
         lib/HistoryItem.cpp \
         lib/Location.cpp \
         lib/MainWindow.cpp \
+        lib/Navigator.cpp \
         lib/NetworkAccessManager.cpp \
         lib/NetworkAccessManagerFactory.cpp \
         lib/ProxyFactory.cpp \
@@ -56,6 +57,7 @@ HEADERS += \
     include/Location.hpp \
     include/MainWindow.fwd.hpp \
     include/MainWindow.hpp \
+    include/Navigator.hpp \
     include/NetworkAccessManager.hpp \
     include/NetworkAccessManagerFactory.hpp \
     include/ProxyFactory.hpp \

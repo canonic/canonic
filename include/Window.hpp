@@ -5,12 +5,14 @@
 #include "./Document.hpp"
 #include "./Location.hpp"
 #include "./MainWindow.hpp"
+#include "./Navigator.hpp"
 
 namespace WebAPI {
     class Window : public QObject
     {
         Q_OBJECT
         Q_PROPERTY(Location *location READ getLocation WRITE setLocation NOTIFY locationChanged)
+        Q_PROPERTY(Navigator *navigator READ getNavigator CONSTANT)
         Q_PROPERTY(int innerScreenX READ getInnerScreenX NOTIFY innerScreenXChanged)
         Q_PROPERTY(int innerScreenY READ getInnerScreenY NOTIFY innerScreenYChanged)
         Q_PROPERTY(int innerWidth READ getInnerWidth NOTIFY innerWidthChanged)
@@ -26,6 +28,8 @@ namespace WebAPI {
 
         Location *getLocation() const;
         void setLocation(Location *location);
+
+        Navigator *getNavigator() const;
 
         int getInnerScreenX() const;
         int getInnerScreenY() const;
@@ -69,6 +73,7 @@ namespace WebAPI {
         QNetworkReply *m_networkReply{nullptr};
         Document *m_document;
         Location *m_location;
+        Navigator *m_navigator;
         MainWindow *m_mainWindow;
     };
 }

@@ -9,10 +9,11 @@
 
 namespace WebAPI {
     Window::Window(MainWindow *mainWindow, QObject *parent)
-        : m_document{new Document(mainWindow)},
+        : QObject(parent),
+          m_document{new Document(mainWindow)},
           m_location{new Location()},
-          m_mainWindow{mainWindow},
-          QObject(parent)
+          m_navigator{new Navigator()},
+          m_mainWindow{mainWindow}
     {
         QObject::connect(this->m_location, &Location::requiresReload,
             this, &Window::handleLocationHrefChange);
@@ -25,6 +26,10 @@ namespace WebAPI {
     void Window::setLocation(Location *location) {
         m_location = location;
         emit locationChanged(m_location);
+    }
+
+    Navigator *Window::getNavigator() const {
+        return m_navigator;
     }
 
     int Window::getInnerScreenX() const
