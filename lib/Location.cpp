@@ -4,7 +4,7 @@
 #include "../include/Location.hpp"
 
 namespace WebAPI {
-    Location::Location(QObject *parent) : m_internal{""}, QObject(parent)
+    Location::Location(QObject *parent) : QObject(parent), m_internal{""}
     {
         //QObject::connect(this, &Location::hrefChanged, this, &Location::reload);
         QObject::connect(this, SIGNAL(hrefChanged(QString)), this, SLOT(reload()));
