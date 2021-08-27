@@ -14,6 +14,11 @@ Metonym.ThemedItem {
 
     property alias topBarHeight: topBar.height
 
+    QtObject {
+        id: __hiddenProps
+        readonly property QtObject lightTheme: Metonym.CanonicLightTheme {}
+    }
+
     Metonym.Pane {
         id: topBar
         height: 44
@@ -31,7 +36,7 @@ Metonym.ThemedItem {
 
             y: parent.height
 
-            theme: Metonym.CanonicLightTheme {}
+            theme: __hiddenProps.lightTheme
 
             width: 400
             height: _historyPopupCol.height
@@ -256,7 +261,7 @@ Metonym.ThemedItem {
             height: width
 
             anchors {
-                right: settingsButton.left
+                right: applicationsMenuButton.left
                 verticalCenter: parent.verticalCenter
                 rightMargin: 10
             }
@@ -290,7 +295,7 @@ Metonym.ThemedItem {
 
                 x: parent.width - width
 
-                theme: Metonym.CanonicLightTheme {}
+                theme: __hiddenProps.lightTheme
 
                 width: 220
                 height: 320
@@ -306,7 +311,7 @@ Metonym.ThemedItem {
         }
 
         Metonym.Button {
-            id: settingsButton
+            id: applicationsMenuButton
 
             anchors {
                 right: parent.right
@@ -317,36 +322,30 @@ Metonym.ThemedItem {
             icon.source: root.theme.icons.bars
             showBackground: true
 
-            onClicked: settingsPopup.opened? settingsPopup.close() : settingsPopup.open()
+            onClicked: applicationsMenu.opened? applicationsMenu.close() : applicationsMenu.open()
 
-            Metonym.Popup {
-                id: settingsPopup
-                // Turn into a menu
+            Metonym.Menu {
+                id: applicationsMenu
 
-                theme: Metonym.CanonicLightTheme{}
+                theme: __hiddenProps.lightTheme
 
+                y: parent.height + 10
                 x: parent.width - width
 
-                width: 600
-                height: 320
-                //focus: true
                 closePolicy: Metonym.Popup.CloseOnEscape | Metonym.Popup.CloseOnPressOutsideParent
 
+                radius: 5
 
-                Metonym.ComboBox {
-                    displayText: 'Build: ' + currentText
+                Metonym.MenuItem {
+                    text: "Settings"
+                    onTriggered: settingsPopup.visible? settingsPopup.close(): settingsPopup.open()
+                }
 
-                    textRole: "text"
-                    valueRole: "value"
+                Metonym.MenuSeparator {}
 
-                    model: [
-                        { value: 'release', text: 'Release' },
-                        { value: 'debug', text: 'Debug' }
-                    ]
-
-                    onCurrentValueChanged: {
-                        mainWindow.build = currentValue
-                    }
+                Metonym.MenuItem {
+                    text: "About Canonic"
+                    onTriggered: aboutCanonicPopup.visible? aboutCanonicPopup.close(): aboutCanonicPopup.open()
                 }
             }
         }
@@ -396,6 +395,206 @@ Metonym.ThemedItem {
             NumberAnimation {
                 duration: 200
                 easing.type: Easing.InOutSine
+            }
+        }
+    }
+
+    Metonym.Popup {
+        id: settingsPopup
+
+        parent: Metonym.Overlay.overlay
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        theme: __hiddenProps.lightTheme
+
+        width: parent.width > 500? Math.min(parent.width, 460 * 1.61803) - 40: parent.width
+        height: parent.width > 500? Math.min(parent.width, 460) - 40: parent.height
+        dim: true
+
+        padding: 0
+
+        Item {
+            anchors {
+                fill: parent
+                margins: 20
+            }
+
+            Metonym.ComboBox {
+                displayText: 'Build: ' + currentText
+
+                textRole: "text"
+                valueRole: "value"
+
+                model: [
+                    { value: 'release', text: 'Release' },
+                    { value: 'debug', text: 'Debug' }
+                ]
+
+                onCurrentValueChanged: {
+                    mainWindow.build = currentValue
+                }
+            }
+
+            Metonym.Button {
+                theme: __hiddenProps.lightTheme
+                icon.source: root.theme.icons.cross
+                anchors {
+                    top: parent.top
+                    right: parent.right
+                }
+                onClicked: settingsPopup.close()
+            }
+        }
+    }
+
+    Metonym.Popup {
+        id: aboutCanonicPopup
+
+        parent: Metonym.Overlay.overlay
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        theme: __hiddenProps.lightTheme
+
+        width: parent.width > 500? Math.min(parent.width, 460 * 1.61803) - 40: parent.width
+        height: parent.width > 500? Math.min(parent.width, 460) - 40: parent.height
+        dim: true
+
+        padding: 0
+
+        Item {
+            anchors {
+                fill: parent
+                margins: 20
+            }
+
+            Metonym.Icon {
+                source: aboutCanonicPopup.theme.icons.canonic
+                color: aboutCanonicPopup.theme.col0
+
+                width: 200
+                height: 200
+
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    verticalCenter: parent.verticalCenter
+                }
+            }
+
+            Metonym.Button {
+                theme: __hiddenProps.lightTheme
+                icon.source: root.theme.icons.cross
+                anchors {
+                    top: parent.top
+                    right: parent.right
+                }
+                onClicked: aboutCanonicPopup.close()
+            }
+
+            Column {
+                spacing: 5
+
+                QtLayouts.RowLayout {
+                    width: 200
+                    height: aboutPopupLabelCanonic.contentHeight
+                    spacing: 0
+
+                    Metonym.Label {
+                        id: aboutPopupLabelCanonic
+                        text: 'Canonic'
+
+                        theme: __hiddenProps.lightTheme
+
+                        fontSizeMode: Text.HorizontalFit
+                        QtLayouts.Layout.fillWidth: true
+                        QtLayouts.Layout.alignment: Qt.AlignBaseline
+                        fontGroup: root.theme.font2
+
+                        font {
+                            bold: true
+                            pointSize: 200
+                            capitalization: Font.AllUppercase
+                        }
+                    }
+
+                    Metonym.Label {
+                        id: aboutPopupLabelBrowser
+                        text: ' Browser'
+
+                        theme: __hiddenProps.lightTheme
+
+                        fontSizeMode: Text.HorizontalFit
+                        QtLayouts.Layout.fillWidth: true
+                        QtLayouts.Layout.alignment: Qt.AlignBaseline
+                        fontGroup: root.theme.font1
+
+                        font {
+                            pointSize: 200
+                            weight: Metonym.Font.Weight.Regular
+                        }
+                    }
+                }
+
+                Grid {
+                    columns: 2
+
+                    columnSpacing: 5
+
+                    Metonym.Label {
+                        text: 'Canonic Version:'
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: window.navigator.appVersion
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: 'Patform:'
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: Qt.platform.os
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: 'Qt Version:'
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: window.navigator.qtVersionStr
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+                }
             }
         }
     }

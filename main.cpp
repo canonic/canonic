@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
 
     QQuickStyle::setStyle("Material");
     qputenv("QT_QUICK_CONTROLS_MATERIAL_VARIANT", "Dense");
+    qputenv("QT_QUICK_CONTROLS_MATERIAL_ACCENT", "#1CFE98");
 
 
 
