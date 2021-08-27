@@ -26,6 +26,7 @@
 
 #include <QGuiApplication>
 #include <QtQuick3D/qquick3d.h>
+#include <QQuickStyle>
 
 #include "include/QQuickMainWindow.hpp"
 #include "include/Window.hpp"
@@ -40,6 +41,8 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // DPI support
 
+
+
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon("://assets/icons/icon.svg"));
 
@@ -53,6 +56,11 @@ int main(int argc, char *argv[])
     if(!ok){
         qputenv("QT_SCALE_FACTOR", "1.0");
     }
+
+    QQuickStyle::setStyle("Material");
+    qputenv("QT_QUICK_CONTROLS_MATERIAL_VARIANT", "Dense");
+
+
 
     /*
 #ifdef Q_OS_WASM
