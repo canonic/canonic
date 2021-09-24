@@ -164,8 +164,9 @@ class MainWindow: public QWindow
   public slots:
     void updateGlobalHistory(QString href);
     void refreshMainUI();
-    void onHostViewportInitalised();
-    void onContentViewportInitalised();
+
+    void handleHostViewportStatusChange(Viewport::Status status);
+    void handleContentViewportStatusChange(Viewport::Status status);
 
   private slots:
     void render();

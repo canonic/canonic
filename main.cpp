@@ -62,8 +62,6 @@ int main(int argc, char *argv[])
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGLRhi);
 
     MainWindow mainWin;
-    mainWin.show();
-
     /*
     // Set the initial url if provided
     QString initialUrl = QString(qgetenv("CANONIC_INITIAL_URL"));

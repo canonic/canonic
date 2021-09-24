@@ -11,13 +11,13 @@
 
 Viewport::Viewport(MainWindow *mainWindow, RenderControl* renderControl):
     QQuickWindow(renderControl),
-    m_initialized{false},
     m_mainWindow{mainWindow},
     m_qmlComponent{nullptr},
     m_qmlEngine{new QQmlEngine},
     m_renderControl{renderControl},
     m_rootItem{nullptr},
     m_source{QUrl()},
+    m_status{Viewport::Status::Null},
     m_textureId{0}
 {
     // Set the incubation controller to the QQuickWindows incubation controller
@@ -55,11 +55,6 @@ Viewport::~Viewport()
     context->doneCurrent();
 }
 
-bool Viewport::isInitialised() const
-{
-    return this->m_initialized;
-}
-
 QQmlEngine* Viewport::getQmlEngine() const
 {
     return this->m_qmlEngine;
@@ -77,6 +72,7 @@ QUrl Viewport::getSource() const
 
 void Viewport::setSource(QUrl source)
 {
+    this->setStatus(Viewport::Status::Loading);
     this->m_source = source;
 
     this->m_qmlComponent = new QQmlComponent(this->m_qmlEngine, source);
@@ -89,6 +85,17 @@ void Viewport::setSource(QUrl source)
     {
         this->handleComponentStatusChange();
     }
+}
+
+Viewport::Status Viewport::getStatus() const
+{
+    return this->m_status;
+}
+
+void Viewport::setStatus(Viewport::Status status)
+{
+    this->m_status = status;
+    emit this->statusChanged(status);
 }
 
 uint Viewport::getTextureId() const
@@ -199,6 +206,8 @@ void Viewport::handleComponentStatusChange()
         const QList<QQmlError> errorList = this->m_qmlComponent->errors();
         for (const QQmlError &error : errorList)
             qWarning() << error.url() << error.line() << error;
+
+        this->setStatus(Viewport::Status::ComponentError);
         return;
     }
 
@@ -207,6 +216,8 @@ void Viewport::handleComponentStatusChange()
         const QList<QQmlError> errorList = this->m_qmlComponent->errors();
         for (const QQmlError &error : errorList)
             qWarning() << error.url() << error.line() << error;
+
+        this->setStatus(Viewport::Status::ObjectCreationError);
         return;
     }
 
@@ -214,6 +225,8 @@ void Viewport::handleComponentStatusChange()
     if (!this->m_rootItem) {
         qWarning("run: Not a QQuickItem");
         delete rootObject;
+
+        this->setStatus(Viewport::Status::NotAnItemError);
         return;
     }
 
@@ -228,6 +241,6 @@ void Viewport::handleComponentStatusChange()
     context->makeCurrent(this->m_mainWindow->m_offscreenSurface);
     this->setGraphicsDevice(QQuickGraphicsDevice::fromOpenGLContext(context));
     this->m_renderControl->initialize();
-    this->m_initialized = true;
-    emit this->initalised();
+
+    this->setStatus(Viewport::Status::Ready);
 }

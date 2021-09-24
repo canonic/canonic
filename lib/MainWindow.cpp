@@ -82,11 +82,11 @@ MainWindow::MainWindow()
     // Now hook up the signals. For simplicy we don't differentiate between
     // renderRequested (only render is needed, no sync) and sceneChanged (polish
     // and sync is needed too).
-    connect(m_contentViewport, &Viewport::initalised, this, &MainWindow::onContentViewportInitalised);
+    connect(m_contentViewport, &Viewport::statusChanged, this, &MainWindow::handleContentViewportStatusChange);
     connect(m_contentViewport->getRenderControl(), &QQuickRenderControl::renderRequested, this, &MainWindow::requestUpdate);
     connect(m_contentViewport->getRenderControl(), &QQuickRenderControl::sceneChanged, this, &MainWindow::requestUpdate);
 
-    connect(m_hostViewport, &Viewport::initalised, this, &MainWindow::onHostViewportInitalised);
+    connect(m_hostViewport, &Viewport::statusChanged, this, &MainWindow::handleHostViewportStatusChange);
     connect(m_hostViewport->getRenderControl(), &QQuickRenderControl::renderRequested, this, &MainWindow::requestUpdate);
     connect(m_hostViewport->getRenderControl(), &QQuickRenderControl::sceneChanged, this, &MainWindow::requestUpdate);
 
@@ -140,7 +140,7 @@ void MainWindow::render()
     // example everything happens on the same thread and therefore all three
     // steps are performed in succession from here. In a threaded setup the
     // render() call would happen on a separate thread.
-    if (this->m_contentViewport->isInitialised())
+    if (this->m_contentViewport->getStatus() == Viewport::Status::Ready)
     {
         this->m_contentViewport->getRenderControl()->beginFrame();
         this->m_contentViewport->getRenderControl()->polishItems();
@@ -149,7 +149,7 @@ void MainWindow::render()
         this->m_contentViewport->getRenderControl()->endFrame();
     }
 
-    if (this->m_hostViewport->isInitialised())
+    if (this->m_contentViewport->getStatus() == Viewport::Status::Ready)
     {
         this->m_hostViewport->getRenderControl()->beginFrame();
         this->m_hostViewport->getRenderControl()->polishItems();
@@ -175,26 +175,33 @@ void MainWindow::requestUpdate()
         m_updateTimer.start();
 }
 
-void MainWindow::onHostViewportInitalised() {
+void MainWindow::handleHostViewportStatusChange(Viewport::Status status) {
     qDebug() << "onHostViewportInitalised";
-    this->m_contentViewport->setSource(QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
+    if (status == Viewport::Status::Ready)
+    {
+        this->show();
+        this->m_contentViewport->setSource(QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
+    }
 }
 
-void MainWindow::onContentViewportInitalised() {
+void MainWindow::handleContentViewportStatusChange(Viewport::Status status) {
     qDebug() << "onContentViewportInitalised";
     //this->m_contentViewport->setSource(QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
 
-    // Set the initial url if provided
-    QString initialUrl = QString(qgetenv("CANONIC_INITIAL_URL"));
-    if(initialUrl.length())
+    if (status == Viewport::Status::Ready)
     {
-        this->m_window->getLocation()->setHref(initialUrl);
-    }
-    else {
-        this->m_window->getLocation()->setHref("");
-    }
+        // Set the initial url if provided
+        QString initialUrl = QString(qgetenv("CANONIC_INITIAL_URL"));
+        if(initialUrl.length())
+        {
+            this->m_window->getLocation()->setHref(initialUrl);
+        }
+        else {
+            this->m_window->getLocation()->setHref("");
+        }
 
-    this->mainUILoaded();
+        this->mainUILoaded();
+    }
 }
 
 void MainWindow::handleScreenChange()
