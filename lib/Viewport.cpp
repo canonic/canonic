@@ -75,18 +75,28 @@ QUrl Viewport::getSource() const
 
 void Viewport::setSource(QUrl source)
 {
-    this->setStatus(Viewport::Status::Loading);
     this->m_source = source;
 
-    this->m_qmlComponent = new QQmlComponent(this->m_qmlEngine, source);
-    if (this->m_qmlComponent->isLoading())
+    if (source.toString() == "")
     {
-        connect(this->m_qmlComponent, &QQmlComponent::statusChanged,
-                this, &Viewport::handleComponentStatusChange);
+        this->setStatus(Viewport::Status::Null);
     }
-    else
+    else {
+        this->setStatus(Viewport::Status::Loading);
+    }
+
+    if (source.toString() != "")
     {
-        this->handleComponentStatusChange();
+        this->m_qmlComponent = new QQmlComponent(this->m_qmlEngine, source);
+        if (this->m_qmlComponent->isLoading())
+        {
+            connect(this->m_qmlComponent, &QQmlComponent::statusChanged,
+                    this, &Viewport::handleComponentStatusChange);
+        }
+        else
+        {
+            this->handleComponentStatusChange();
+        }
     }
 }
 
