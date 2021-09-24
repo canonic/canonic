@@ -62,11 +62,6 @@ MainWindow::MainWindow()
     HostEventPropagator::m_contentViewport = m_contentViewport;
     HostEventPropagator::m_hostViewport = m_hostViewport;
 
-    m_contentViewport->setDefaultAlphaBuffer(true);
-    m_hostViewport->setDefaultAlphaBuffer(true);
-    m_contentViewport->setColor(Qt::transparent);
-    m_hostViewport->setColor(Qt::transparent);
-
     qmlRegisterUncreatableType<HistoryItem>("com.mycompany.qmlcomponents", 1, 0, "HistoryItem", "Can not create HistoryItem");
     qmlRegisterType<View>("com.mycompany.qmlcomponents", 1, 0, "View");
     qmlRegisterType<HostEventPropagator>("com.mycompany.qmlcomponents", 1, 0, "HostEventPropagator");
