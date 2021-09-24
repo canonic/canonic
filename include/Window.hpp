@@ -21,6 +21,7 @@ namespace WebAPI {
         Q_PROPERTY(int outerHeight READ getOuterHeight NOTIFY outerHeightChanged)
         Q_PROPERTY(Document *document READ getDocument NOTIFY documentChanged)
         Q_PROPERTY(QUrl themeSource READ getThemeSource WRITE setThemeSource NOTIFY themeSourceChanged)
+        Q_PROPERTY(QUrl viewSource READ getViewSource NOTIFY viewSourceChanged)
         Q_PROPERTY(QQmlComponent *themeComponent READ getThemeComponent NOTIFY themeComponentChanged)
 
       public:
@@ -37,10 +38,14 @@ namespace WebAPI {
         int getInnerHeight() const;
         int getOuterWidth() const;
         int getOuterHeight() const;
-        void handleWindowResize(QResizeEvent* event);
+        void handleWindowResize();
         Document *getDocument() const;
+
         QUrl getThemeSource() const;
         void setThemeSource(QUrl themeSource);
+
+        QUrl getViewSource() const;
+
         QQmlComponent *getThemeComponent();
 
 
@@ -63,6 +68,7 @@ namespace WebAPI {
         void outerHeightChanged(int location);
         void documentChanged(WebAPI::Document *document);
         void themeSourceChanged();
+        void viewSourceChanged();
         void themeComponentChanged();
 
       private slots:

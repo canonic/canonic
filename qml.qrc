@@ -7,13 +7,14 @@
         <file>qml/JSONFileView.qml</file>
         <file>qml/MainUI.qml</file>
         <file>qml/AuthComponent.qml</file>
-        <file>qml/MainUIQQuick.qml</file>
-        <file>qml/MainUIQWidget.qml</file>
+        <file>qml/main.qml</file>
         <file>qml/QMLDocumentView.qml</file>
         <file>assets/images/spinner-256px.png</file>
         <file>assets/icons/icon.svg</file>
         <file>qml/DebugView.qml</file>
         <file>qml/HTMLDocumentView.qml</file>
         <file>qml/NetworkErrorView.qml</file>
+        <file>qml/TLI.qml</file>
+        <file>qml/ScrollTester.qml</file>
     </qresource>
 </RCC>

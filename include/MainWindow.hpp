@@ -1,17 +1,25 @@
 #pragma once
 
+#include <QOpenGLContext>
+#include <QOffscreenSurface>
 #include <QQuickItem>
 #include <QResizeEvent>
+#include <QTimer>
 #include <QVector>
+#include <QWindow>
 
 #include "./Auth.hpp"
+#include "./CanonicRenderer.hpp"
+#include "./ContentViewport.hpp"
 #include "./HistoryItem.hpp"
+#include "./HostViewport.hpp"
 #include "./NetworkAccessManagerFactory.hpp"
+#include "./RenderControl.hpp"
 #include "./Window.fwd.hpp"
 #include "./View.hpp"
 #include "./Location.hpp"
 
-class MainWindow: public QObject
+class MainWindow: public QWindow
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<View> views READ views NOTIFY viewsChanged)
@@ -28,7 +36,6 @@ class MainWindow: public QObject
     Q_PROPERTY(QString build READ getBuild WRITE setBuild NOTIFY buildChanged)
 
   signals:
-    void onResize(QResizeEvent* event);
     void viewsChanged();
     void historyItemsChanged();
     void historyIndexChanged();
@@ -40,12 +47,7 @@ class MainWindow: public QObject
 
   public:
     MainWindow();
-
-    virtual const int width() const = 0;
-    virtual const int height() const = 0;
-    virtual void resize(int w, int h) = 0;
-    virtual void setGeometry(int x, int y, int w, int h) = 0;
-    virtual void show() = 0;
+    ~MainWindow();
 
     QQmlListProperty<View> views();
     void appendView(View *view);
@@ -57,7 +59,9 @@ class MainWindow: public QObject
     const QVector<View *> &getViews() const;
 
     int getActiveViewIndex() const;
-    virtual void setActiveViewIndex(int activeViewIndex);
+    void setActiveViewIndex(int activeViewIndex);
+
+    View *getActiveView() const;
 
     QVector<HistoryItem *> &getHistory();
 
@@ -99,48 +103,14 @@ class MainWindow: public QObject
     QString getBuild() const;
     void setBuild(QString build);
 
-    virtual QQmlEngine* getQmlEngine() const = 0;
-    virtual void refresh() = 0;
+    QQmlEngine* getQmlEngine() const;
+    void refresh();
 
+    /**
+     * Used to hide the loading spinner in wasm distributions.
+     */
     Q_INVOKABLE
     void mainUILoaded() const;
-
-    Q_INVOKABLE
-    virtual void handleMouseDoubleClickEvent(QPointF localPos,
-        int button,
-        int buttons,
-        int modifiers,
-        int source);
-
-    Q_INVOKABLE
-    virtual void handlePositionChangedEvent(QPointF localPos,
-        int button,
-        int buttons,
-        int modifiers,
-        int source);
-
-    Q_INVOKABLE
-    virtual void handlePressEvent(QPointF localPos,
-        int button,
-        int buttons,
-        int modifiers,
-        int source);
-
-    Q_INVOKABLE
-    virtual void handleReleaseEvent(QPointF localPos,
-        int button,
-        int buttons,
-        int modifiers,
-        int source);
-
-    Q_INVOKABLE
-    virtual void handleWheelEvent(QPointF localPos,
-        QPoint pixelDelta,
-        QPoint angleDelta,
-        int buttons,
-        int modifiers,
-        bool inverted,
-        int source);
 
     Q_INVOKABLE
     void previousPage();
@@ -176,10 +146,30 @@ class MainWindow: public QObject
     QUrl m_homePageUrl{"https://raw.githubusercontent.com/canonic/canonic-qml-web-directory/main/main.qml"};
     QQmlComponent *m_themeComponent{nullptr};
 
+    QOpenGLContext *m_context;
+    QOffscreenSurface *m_offscreenSurface;
+    ContentViewport *m_contentViewport;
+    HostViewport *m_hostViewport;
+    QTimer m_updateTimer;
+    CanonicRenderer *m_canonicRenderer;
+
+  protected:
+    void exposeEvent(QExposeEvent *e) override;
+    void resizeEvent(QResizeEvent *e) override;
+    bool event(QEvent *e) override;
+
+  private:
+    QRectF getNormalisedViewportGeometry() const;
+
   public slots:
     void updateGlobalHistory(QString href);
     void refreshMainUI();
+    void onHostViewportInitalised();
+    void onContentViewportInitalised();
+
+  private slots:
+    void render();
+    void requestUpdate();
+    void handleScreenChange();
 
 };
-
-Q_DECLARE_INTERFACE(MainWindow, "com.mycompany.qmlcomponents/1.0")

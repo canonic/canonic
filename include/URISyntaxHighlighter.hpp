@@ -11,7 +11,6 @@
  * https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/richtext/syntaxhighlighter?h=5.15
  * https://github.com/stephenquan/QtSyntaxHighlighterApp
  **/
-
 class URISyntaxHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT

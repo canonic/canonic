@@ -21,18 +21,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         lib/Auth.cpp \
+        lib/CanonicRenderer.cpp \
+        lib/ContentViewport.cpp \
         lib/CxxSyntaxHighlighter.cpp \
         lib/Document.cpp \
         lib/HistoryItem.cpp \
+        lib/HostEventPropagator.cpp \
+        lib/HostViewport.cpp \
         lib/Location.cpp \
         lib/MainWindow.cpp \
         lib/Navigator.cpp \
         lib/NetworkAccessManager.cpp \
         lib/NetworkAccessManagerFactory.cpp \
         lib/ProxyFactory.cpp \
-        lib/QQuickMainWindow.cpp \
+        lib/RenderControl.cpp \
         lib/URISyntaxHighlighter.cpp \
         lib/View.cpp \
+        lib/Viewport.cpp \
         lib/Window.cpp \
         main.cpp
 
@@ -52,9 +57,16 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     include/Auth.hpp \
+    include/CanonicRenderer.hpp \
+    include/ContentViewport.fwd.hpp \
+    include/ContentViewport.hpp \
     include/CxxSyntaxHighlighter.hpp \
     include/Document.hpp \
     include/HistoryItem.hpp \
+    include/HostEventPropagator.fwd.hpp \
+    include/HostEventPropagator.hpp \
+    include/HostViewport.fwd.hpp \
+    include/HostViewport.hpp \
     include/Location.hpp \
     include/MainWindow.fwd.hpp \
     include/MainWindow.hpp \
@@ -62,9 +74,12 @@ HEADERS += \
     include/NetworkAccessManager.hpp \
     include/NetworkAccessManagerFactory.hpp \
     include/ProxyFactory.hpp \
-    include/QQuickMainWindow.hpp \
+    include/RenderControl.fwd.hpp \
+    include/RenderControl.hpp \
     include/URISyntaxHighlighter.hpp \
     include/View.hpp \
+    include/Viewport.fwd.hpp \
+    include/Viewport.hpp \
     include/Window.fwd.hpp \
     include/Window.hpp
 
@@ -78,24 +93,12 @@ DISTFILES += \
 
 
 CONFIG(wasm) {
-
     QMAKE_LFLAGS += "-s INITIAL_MEMORY=33554432 "
 
 } else {
     QT += quickwidgets
-    #QT += widgets
     QT += svg
-
     QML_IMPORT_PATH = https://www.canonic.com/metonym/release/Metonym/
-
-    SOURCES += lib/QWidgetMainWindow.cpp \
-               lib/LayoutViewport.cpp \
-               lib/MainViewport.cpp
-
-    HEADERS += include/QWidgetMainWindow.hpp \
-               include/LayoutViewport.hpp \
-               include/MainViewport.hpp
-
     QT_PLUGIN += qsvg
 }
 

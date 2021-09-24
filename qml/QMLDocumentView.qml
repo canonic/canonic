@@ -11,6 +11,14 @@ Metonym.ThemedItem {
         }
     }
 
+    // Urls may not link to a document that specifies a background colour. In
+    // those cases we should display a white background to be consistent with
+    // current browsers and default qt qml behavior.
+    Rectangle {
+        color: loader.status === Loader.Ready? 'white' : root.theme.col16
+        anchors.fill: parent
+    }
+
     MouseArea {
         anchors.fill: root
         onClicked: {
@@ -29,7 +37,7 @@ Metonym.ThemedItem {
 
             if (href === '')
             {
-                return mainWindow.homePage
+                return "https://raw.githubusercontent.com/canonic/canonic-qml-web-directory/main/main.qml"
             }
 
             return href

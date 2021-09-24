@@ -5,21 +5,235 @@
 #include "../include/Window.hpp"
 
 #include "../include/CxxSyntaxHighlighter.hpp"
+#include "../include/HostEventPropagator.hpp"
+#include "../include/URISyntaxHighlighter.hpp"
 
 #ifdef Q_OS_WASM
 #include <emscripten.h>
 #endif
 
+#include <QOpenGLFramebufferObject>
+#include <QOpenGLFunctions>
 #include <QQmlEngine>
+#include <QQuickGraphicsDevice>
+#include <QQuickRenderTarget>
+#include <QQuickWindow>
 #include <QtQml>
 
 #include <iostream>
 
 MainWindow::MainWindow()
 {
+    this->resize(1600, 1000);
+
     this->m_auth = new Auth();
     this->m_networkAccessManagerFactory = new NetworkAccessManagerFactory(this);
     this->m_window = new WebAPI::Window(this);
+
+    setSurfaceType(QSurface::OpenGLSurface);
+    QSurfaceFormat format;
+    // Qt Quick may need a depth and stencil buffer. Always make sure these are available.
+    format.setDepthBufferSize(16);
+    format.setStencilBufferSize(8);
+    format.setAlphaBufferSize(8);
+    setFormat(format);
+
+    m_context = new QOpenGLContext;
+    m_context->setFormat(format);
+    m_context->create();
+
+    m_offscreenSurface = new QOffscreenSurface;
+    // Pass m_context->format(), not format. Format does not specify and color
+    // buffer sizes, while the context, that has just been created, reports a
+    // format that has these values filled in. Pass this to the offscreen
+    // surface to make sure it will be compatible with the context's
+    // configuration.
+    m_offscreenSurface->setFormat(m_context->format());
+    m_offscreenSurface->create();
+
+    m_canonicRenderer = new CanonicRenderer(m_context, m_offscreenSurface);
+
+    // Create a QQuickWindow that is associated with out render control. Note
+    // that this window never gets created or shown, meaning that it will never
+    // get an underlying native (platform) window.
+    m_contentViewport = new ContentViewport(this, new RenderControl(this));
+    m_hostViewport = new HostViewport(this, new RenderControl(this));
+
+    HostEventPropagator::m_contentViewport = m_contentViewport;
+    HostEventPropagator::m_hostViewport = m_hostViewport;
+
+    m_contentViewport->setDefaultAlphaBuffer(true);
+    m_hostViewport->setDefaultAlphaBuffer(true);
+    m_contentViewport->setColor(Qt::transparent);
+    m_hostViewport->setColor(Qt::transparent);
+
+    qmlRegisterUncreatableType<HistoryItem>("com.mycompany.qmlcomponents", 1, 0, "HistoryItem", "Can not create HistoryItem");
+    qmlRegisterType<View>("com.mycompany.qmlcomponents", 1, 0, "View");
+    qmlRegisterType<HostEventPropagator>("com.mycompany.qmlcomponents", 1, 0, "HostEventPropagator");
+    qmlRegisterType< CxxSyntaxHighlighter >( "Meta", 1, 0, "CxxSyntaxHighlighter" );
+    qmlRegisterType< URISyntaxHighlighter >( "Meta", 1, 0, "URISyntaxHighlighter" );
+
+    // When Quick says there is a need to render, we will not render immediately. Instead,
+    // a timer with a small interval is used to get better performance.
+    m_updateTimer.setSingleShot(true);
+    m_updateTimer.setInterval(5);
+    connect(&m_updateTimer, &QTimer::timeout, this, &MainWindow::render);
+
+    // Now hook up the signals. For simplicy we don't differentiate between
+    // renderRequested (only render is needed, no sync) and sceneChanged (polish
+    // and sync is needed too).
+    connect(m_contentViewport, &Viewport::initalised, this, &MainWindow::onContentViewportInitalised);
+    connect(m_contentViewport->getRenderControl(), &QQuickRenderControl::renderRequested, this, &MainWindow::requestUpdate);
+    connect(m_contentViewport->getRenderControl(), &QQuickRenderControl::sceneChanged, this, &MainWindow::requestUpdate);
+
+    connect(m_hostViewport, &Viewport::initalised, this, &MainWindow::onHostViewportInitalised);
+    connect(m_hostViewport->getRenderControl(), &QQuickRenderControl::renderRequested, this, &MainWindow::requestUpdate);
+    connect(m_hostViewport->getRenderControl(), &QQuickRenderControl::sceneChanged, this, &MainWindow::requestUpdate);
+
+    // Just recreating the texture on resize is not sufficient, when moving
+    // between screens with different devicePixelRatio the QWindow size may
+    // remain the same but the texture dimension is to change regardless.
+    connect(this, &QWindow::screenChanged, this, &MainWindow::handleScreenChange);
+
+    m_hostViewport->setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+}
+
+MainWindow::~MainWindow()
+{
+    delete this->m_contentViewport;
+    delete this->m_hostViewport;
+
+    delete m_canonicRenderer;
+    delete m_offscreenSurface;
+    delete m_context;
+}
+
+QRectF MainWindow::getNormalisedViewportGeometry() const
+{
+    if (this->m_contentViewport == nullptr || this->m_hostViewport == nullptr) {
+        return QRectF();
+    }
+
+    int mainViewportWidth = this->m_hostViewport->geometry().width();
+    int mainViewportHeight = this->m_hostViewport->geometry().height();
+
+    if (mainViewportWidth == 0 || mainViewportHeight == 0) {
+        return QRectF();
+    }
+
+    QRectF viewportGeometry = this->m_contentViewport->geometry();
+    QRectF normalisedViewportGeometry;
+    normalisedViewportGeometry.setX(viewportGeometry.x() / mainViewportWidth);
+    normalisedViewportGeometry.setY(viewportGeometry.y() / mainViewportHeight);
+    normalisedViewportGeometry.setWidth(viewportGeometry.width() / mainViewportWidth);
+    normalisedViewportGeometry.setHeight(viewportGeometry.height() / mainViewportHeight);
+
+    return normalisedViewportGeometry;
+}
+
+void MainWindow::render()
+{
+    if (!m_context->makeCurrent(m_offscreenSurface))
+        return;
+
+    // Polish, synchronize and render the next frame (into our texture). In this
+    // example everything happens on the same thread and therefore all three
+    // steps are performed in succession from here. In a threaded setup the
+    // render() call would happen on a separate thread.
+    if (this->m_contentViewport->isInitialised())
+    {
+        this->m_contentViewport->getRenderControl()->beginFrame();
+        this->m_contentViewport->getRenderControl()->polishItems();
+        this->m_contentViewport->getRenderControl()->sync();
+        this->m_contentViewport->getRenderControl()->render();
+        this->m_contentViewport->getRenderControl()->endFrame();
+    }
+
+    if (this->m_hostViewport->isInitialised())
+    {
+        this->m_hostViewport->getRenderControl()->beginFrame();
+        this->m_hostViewport->getRenderControl()->polishItems();
+        this->m_hostViewport->getRenderControl()->sync();
+        this->m_hostViewport->getRenderControl()->render();
+        this->m_hostViewport->getRenderControl()->endFrame();
+    }
+
+
+    QOpenGLFramebufferObject::bindDefault();
+    m_context->functions()->glFlush();
+
+    // Get something onto the screen.
+    m_canonicRenderer->render(this,
+                              this->getNormalisedViewportGeometry(),
+                              this->m_contentViewport->getTextureId(),
+                              this->m_hostViewport->getTextureId());
+}
+
+void MainWindow::requestUpdate()
+{
+    if (!m_updateTimer.isActive())
+        m_updateTimer.start();
+}
+
+void MainWindow::onHostViewportInitalised() {
+    qDebug() << "onHostViewportInitalised";
+    this->m_contentViewport->setSource(QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
+}
+
+void MainWindow::onContentViewportInitalised() {
+    qDebug() << "onContentViewportInitalised";
+    //this->m_contentViewport->setSource(QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
+
+    // Set the initial url if provided
+    QString initialUrl = QString(qgetenv("CANONIC_INITIAL_URL"));
+    if(initialUrl.length())
+    {
+        this->m_window->getLocation()->setHref(initialUrl);
+    }
+    else {
+        this->m_window->getLocation()->setHref("");
+    }
+
+    this->mainUILoaded();
+}
+
+void MainWindow::handleScreenChange()
+{
+    this->m_window->handleWindowResize();
+
+    QSize newSize = size() * devicePixelRatio();
+    this->m_contentViewport->resizeTexture(newSize);
+    this->m_hostViewport->resizeTexture(newSize);
+
+    this->render();
+}
+
+void MainWindow::exposeEvent(QExposeEvent *)
+{
+    if (isExposed()) {
+        this->render();
+    }
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    this->m_window->handleWindowResize();
+
+    QSize newSize = size() * devicePixelRatio();
+    this->m_contentViewport->resizeTexture(newSize);
+    this->m_hostViewport->resizeTexture(newSize);
+
+    this->render();
+}
+
+bool MainWindow::event(QEvent *event)
+{
+    if (event->isInputEvent()) {
+        QCoreApplication::sendEvent(m_hostViewport, event);
+        return true;
+    }
+
+    return QWindow::event(event);
 }
 
 void MainWindow::previousPage()
@@ -34,7 +248,6 @@ void MainWindow::previousPage()
         emit this->historyIndexChanged();
 
         this->m_window->getLocation()->setHref(this->historyItem(this->m_historyIndex)->getLocation()->getHref());
-
     }
 }
 
@@ -336,53 +549,50 @@ void MainWindow::mainUILoaded() const
 #endif
 }
 
+QQmlEngine* MainWindow::getQmlEngine() const
+{
+    return this->m_hostViewport->getQmlEngine();
+}
+
+void MainWindow::refresh()
+{
+    this->m_contentViewport->reloadTLISource();
+    /*
+    if(this->m_rootItem != nullptr)
+    {
+        QUrl tmp = m_rootItem->property("source").toString();
+        m_rootItem->setProperty("source", QUrl(""));
+        this->m_qmlEngine->clearComponentCache();
+        this->resetThemeComponent();
+        m_rootItem->setProperty("source", tmp);
+    }
+    */
+}
+
 void MainWindow::setActiveViewIndex(int activeViewIndex)
 {
     std::cout << "setActiveViewIndex: " << activeViewIndex << std::endl;
     this->m_activeViewIndex = activeViewIndex;
-    emit this->activeViewIndexChanged(this->m_activeViewIndex);
+    emit this->activeViewIndexChanged(activeViewIndex);
+
+    /*
+    if(activeViewIndex >= 0 && activeViewIndex < this->viewCount())
+    {
+        this->m_contentViewport->setTLISource(this->view(activeViewIndex)->getQmlSource());
+    }
+    else {
+        this->m_contentViewport->setTLISource(QUrl(""));
+    }
+    */
 }
 
-void MainWindow::handleMouseDoubleClickEvent(QPointF localPos,
-    int button,
-    int buttons,
-    int modifiers,
-    int source)
+View *MainWindow::getActiveView() const
 {
-}
-
-void MainWindow::handlePositionChangedEvent(QPointF localPos,
-    int button,
-    int buttons,
-    int modifiers,
-    int source)
-{
-}
-
-void MainWindow::handlePressEvent(QPointF localPos,
-    int button,
-    int buttons,
-    int modifiers,
-    int source)
-{
-}
-
-void MainWindow::handleReleaseEvent(QPointF localPos,
-    int button,
-    int buttons,
-    int modifiers,
-    int source)
-{
-}
-
-void MainWindow::handleWheelEvent(QPointF localPos,
-    QPoint pixelDelta,
-    QPoint angleDelta,
-    int buttons,
-    int modifiers,
-    bool inverted,
-    int source)
-{
+    if(this->m_activeViewIndex >= 0 && m_activeViewIndex < this->viewCount())
+    {
+        return this->view(this->m_activeViewIndex);
+    }
+    return nullptr;
 }
 
 void MainWindow::updateGlobalHistory(QString href)

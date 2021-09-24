@@ -17,6 +17,9 @@ namespace WebAPI {
     {
         QObject::connect(this->m_location, &Location::requiresReload,
             this, &Window::handleLocationHrefChange);
+
+        QObject::connect(this->m_mainWindow, &MainWindow::activeViewIndexChanged,
+            this, &Window::viewSourceChanged);
     }
 
     Location *Window::getLocation() const {
@@ -78,6 +81,15 @@ namespace WebAPI {
         emit themeSourceChanged();
     }
 
+    QUrl Window::getViewSource() const
+    {
+        View *activeView = this->m_mainWindow->getActiveView();
+        if (activeView == nullptr) {
+            return QUrl("");
+        }
+        return activeView->getQmlSource();
+    }
+
     QQmlComponent * Window::getThemeComponent()
     {
         return this->m_mainWindow->getThemeComponent();
@@ -121,7 +133,7 @@ namespace WebAPI {
         }
     }
 
-    void Window::handleWindowResize(QResizeEvent* event)
+    void Window::handleWindowResize()
     {
         emit innerScreenXChanged(this->getInnerScreenX());
         emit innerScreenYChanged(this->getInnerScreenY());

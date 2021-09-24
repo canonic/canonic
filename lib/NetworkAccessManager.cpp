@@ -51,7 +51,8 @@ QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operat
     if(url.startsWith("https://raw.githubusercontent.com/canonic/canonic-qml-web-directory/main"))
     {
         networkRequest.setUrl(QUrl(url.replace("https://raw.githubusercontent.com/canonic/canonic-qml-web-directory/main", "file:///S:/canonic/canonic-qml-web-directory")));
-    }*/
+    }
+    */
 
 #ifdef Q_OS_WASM
     if(networkRequest.url().scheme().contains("http"))

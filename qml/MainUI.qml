@@ -44,6 +44,8 @@ Metonym.ThemedItem {
             padding: 0
 
             focus: true
+
+            modal: true
             closePolicy: Metonym.Popup.CloseOnEscape | Metonym.Popup.CloseOnPressOutside | Metonym.Popup.CloseOnReleaseOutsideParent
 
             QtLayouts.ColumnLayout {
@@ -182,7 +184,7 @@ Metonym.ThemedItem {
             icon.source: root.theme.icons.reload
             showBackground: true
 
-            onClicked: {
+            onClicked: (mouse) => {
                 if ((mouse.button === Qt.LeftButton))
                 {
                      window.location.reload(mouse.modifiers === Qt.ControlModifier)
@@ -300,6 +302,8 @@ Metonym.ThemedItem {
                 width: 220
                 height: 320
                 focus: true
+
+                modal: true
                 closePolicy: Metonym.Popup.CloseOnEscape | Metonym.Popup.CloseOnPressOutsideParent
 
                 AuthComponent {
@@ -332,6 +336,7 @@ Metonym.ThemedItem {
                 y: parent.height + 10
                 x: parent.width - width
 
+                modal: true
                 closePolicy: Metonym.Popup.CloseOnEscape | Metonym.Popup.CloseOnPressOutsideParent
 
                 radius: 5
@@ -456,10 +461,9 @@ Metonym.ThemedItem {
         y: (parent.height - height) / 2
 
         theme: __hiddenProps.lightTheme
-
         width: parent.width > 500? Math.min(parent.width, 460 * 1.61803) - 40: parent.width
         height: parent.width > 500? Math.min(parent.width, 460) - 40: parent.height
-        dim: true
+        modal: true
 
         padding: 0
 
