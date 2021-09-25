@@ -155,28 +155,9 @@ namespace WebAPI {
         std::cout << "hardReload: " << hardReload << std::endl;
         QNetworkRequest request{QUrl{href}};
 
+        this->m_mainWindow->resetContentViewport();
         QQmlEngine *qQmlEngine = this->m_mainWindow->getQmlEngine();
         QNetworkAccessManager *nam = qQmlEngine->networkAccessManager();
-
-        if(hardReload)
-        {
-            //qQmlEngine->clearComponentCache();
-
-            // Reset the global theme source otherwise the theme items are of instances of different components
-            //this->m_mainWindow->resetThemeComponent();
-
-            QMetaObject::invokeMethod( this->m_mainWindow, "refreshMainUI", Qt::QueuedConnection);
-            //this->m_mainWindow->refresh();
-        }
-
-        /*
-         * neither of these work for local files
-        nam->clearConnectionCache();
-
-        // Always ignore cache for now
-        request.setAttribute(QNetworkRequest::Attribute::CacheLoadControlAttribute,
-            QNetworkRequest::AlwaysNetwork);
-        */
 
         this->m_networkReply = nam->get(request);
 
@@ -310,6 +291,14 @@ namespace WebAPI {
         this->m_document->setObjectValue(objectValue);
         this->m_mainWindow->setActiveViewIndex(activeViewIndex);
         this->m_mainWindow->updateGlobalHistory(this->m_location->getHref());
+
+        QFile file("://qml/TLI.qml");
+        if (file.open(QIODevice::ReadOnly))
+        {
+            this->m_mainWindow->m_contentViewport->setData(file.readAll(), QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
+            file.close();
+        }
+
         reply->deleteLater();
         std::cout << "Finished Request" << std::endl;
     }

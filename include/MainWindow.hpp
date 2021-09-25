@@ -104,7 +104,7 @@ class MainWindow: public QWindow
     void setBuild(QString build);
 
     QQmlEngine* getQmlEngine() const;
-    void refresh();
+    void resetContentViewport();
 
     /**
      * Used to hide the loading spinner in wasm distributions.
@@ -163,7 +163,6 @@ class MainWindow: public QWindow
 
   public slots:
     void updateGlobalHistory(QString href);
-    void refreshMainUI();
 
     void handleHostViewportStatusChange(Viewport::Status status);
     void handleContentViewportStatusChange(Viewport::Status status);

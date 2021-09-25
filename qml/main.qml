@@ -23,7 +23,6 @@ Item {
 
     Component.onCompleted: {
         window.theme = theme
-        //mainWindow.mainUILoaded()
     }
 
     layer.enabled: true

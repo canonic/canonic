@@ -28,10 +28,11 @@ void ContentViewport::setTLISource(QUrl source)
 
 void ContentViewport::reloadTLISource()
 {
+    qDebug() << "reloadTLISource: " << (this->m_rootItem == nullptr);
     if(this->m_rootItem != nullptr){
         QUrl tmp = this->m_rootItem->property("source").toString();
         this->m_rootItem->setProperty("source", QUrl(""));
-        this->m_qmlEngine->clearComponentCache();
+        //this->m_qmlEngine->clearComponentCache();
         //this->resetThemeComponent();
         this->m_rootItem->setProperty("source", tmp);
     }

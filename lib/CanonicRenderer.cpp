@@ -56,11 +56,8 @@ void CanonicRenderer::init(QWindow *w)
             "uniform lowp sampler2D tex;\n"
             "uniform lowp sampler2D tex2;\n"
             "varying vec2 fragTexCoord;\n"
-//            "uniform lowp float viewportWidth;\n"
-//            "uniform lowp float viewportHeight;\n"
             "void main(void)\n"
             "{\n"
-//            "    vec2 viewportTexCoord = vec2(fragTexCoord.x / viewportWidth, fragTexCoord.y / viewportHeight);\n"
             "    vec4 a = texture2D(tex, fragTexCoord);\n"
             "    vec4 b = texture2D(tex2, fragTexCoord);\n"
             "    gl_FragColor = (a * (1.0 - b.a)) + (b * b.a);\n"
@@ -71,11 +68,8 @@ void CanonicRenderer::init(QWindow *w)
             "uniform lowp sampler2D tex;\n"
             "uniform lowp sampler2D tex2;\n"
             "varying vec2 fragTexCoord;\n"
-//            "uniform lowp float viewportWidth;\n"
-//            "uniform lowp float viewportHeight;\n"
             "void main(void)\n"
             "{\n"
-//            "    vec2 viewportTexCoord = vec2(fragTexCoord.x / viewportWidth, fragTexCoord.y / viewportHeight);\n"
             "    vec4 a = texture2D(tex, fragTexCoord);\n"
             "    vec4 b = texture2D(tex2, fragTexCoord);\n"
             "    gl_FragColor = (a * (1.0 - b.a)) + (b * b.a);\n"
@@ -147,35 +141,30 @@ void CanonicRenderer::render(QWindow *w,
     if (!m_context->makeCurrent(w))
         return;
 
-    if (texture and texture2) {
-        QOpenGLFunctions *f = m_context->functions();
-        f->glViewport(0, 0, w->width() * w->devicePixelRatio(), w->height() * w->devicePixelRatio());
-        f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    QOpenGLFunctions *f = m_context->functions();
+    f->glViewport(0, 0, w->width() * w->devicePixelRatio(), w->height() * w->devicePixelRatio());
+    f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        f->glEnable(GL_CULL_FACE);
-        f->glEnable(GL_DEPTH_TEST);
+    f->glEnable(GL_CULL_FACE);
+    f->glEnable(GL_DEPTH_TEST);
 
-        m_program->bind();
+    m_program->bind();
 
-        //m_program->setUniformValue("viewportWidth", (float) normalisedViewportGeometry.width());
-        //m_program->setUniformValue("viewportHeight", (float) normalisedViewportGeometry.height());
+    QOpenGLVertexArrayObject::Binder vaoBinder(m_vao);
 
-        QOpenGLVertexArrayObject::Binder vaoBinder(m_vao);
+    // If VAOs are not supported, set the vertex attributes every time.
+    if (!m_vao->isCreated())
+        setupVertexAttribs();
 
-        // If VAOs are not supported, set the vertex attributes every time.
-        if (!m_vao->isCreated())
-            setupVertexAttribs();
+    f->glActiveTexture(GL_TEXTURE0 + 0);
+    f->glBindTexture(GL_TEXTURE_2D, texture);
+    f->glActiveTexture(GL_TEXTURE0 + 1);
+    f->glBindTexture(GL_TEXTURE_2D, texture2);
 
-        f->glActiveTexture(GL_TEXTURE0 + 0);
-        f->glBindTexture(GL_TEXTURE_2D, texture);
-        f->glActiveTexture(GL_TEXTURE0 + 1);
-        f->glBindTexture(GL_TEXTURE_2D, texture2);
+    // Draw the verticies.
+    f->glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        // Draw the verticies.
-        f->glDrawArrays(GL_TRIANGLES, 0, 6);
+    f->glBindTexture(GL_TEXTURE_2D, 0);
 
-        f->glBindTexture(GL_TEXTURE_2D, 0);
-
-        m_context->swapBuffers(w);
-    }
+    m_context->swapBuffers(w);
 }

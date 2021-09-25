@@ -25,8 +25,11 @@ class Viewport: public QQuickWindow
 
     QQmlEngine* getQmlEngine() const;
     RenderControl * getRenderControl() const;
+
     QUrl getSource() const;
     void setSource(QUrl source);
+    void setData(const QByteArray &data, QUrl source);
+
     Viewport::Status getStatus() const;
     uint getTextureId() const;
     void resizeTexture(QSize newSize);
@@ -40,6 +43,7 @@ class Viewport: public QQuickWindow
     QQmlEngine *m_qmlEngine;
     RenderControl *m_renderControl;
     QQuickItem *m_rootItem;
+
     QUrl m_source;
     Viewport::Status m_status;
 

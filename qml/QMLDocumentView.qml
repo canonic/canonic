@@ -15,7 +15,7 @@ Metonym.ThemedItem {
     // those cases we should display a white background to be consistent with
     // current browsers and default qt qml behavior.
     Rectangle {
-        color: loader.status === Loader.Ready? 'white' : root.theme.col16
+        color: loader.status === Loader.Ready? 'white' : 'yellow'
         anchors.fill: parent
     }
 

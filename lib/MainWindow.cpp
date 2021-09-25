@@ -103,6 +103,28 @@ MainWindow::~MainWindow()
     delete m_context;
 }
 
+void MainWindow::resetContentViewport()
+{
+    qDebug() << "resetContentViewport";
+
+    // Set the existing content viewport's source to an empty url to stop
+    // rendering
+    ContentViewport *tmp = this->m_contentViewport;
+    tmp->setSource(QUrl(""));
+    disconnect(tmp, &Viewport::statusChanged, this, &MainWindow::handleContentViewportStatusChange);
+    disconnect(tmp->getRenderControl(), &QQuickRenderControl::renderRequested, this, &MainWindow::requestUpdate);
+    disconnect(tmp->getRenderControl(), &QQuickRenderControl::sceneChanged, this, &MainWindow::requestUpdate);
+
+    this->m_contentViewport = new ContentViewport(this, new RenderControl(this));
+    HostEventPropagator::m_contentViewport = this->m_contentViewport;
+
+    connect(this->m_contentViewport, &Viewport::statusChanged, this, &MainWindow::handleContentViewportStatusChange);
+    connect(this->m_contentViewport->getRenderControl(), &QQuickRenderControl::renderRequested, this, &MainWindow::requestUpdate);
+    connect(this->m_contentViewport->getRenderControl(), &QQuickRenderControl::sceneChanged, this, &MainWindow::requestUpdate);
+
+    tmp->deleteLater();
+}
+
 QRectF MainWindow::getNormalisedViewportGeometry() const
 {
     if (this->m_contentViewport == nullptr || this->m_hostViewport == nullptr) {
@@ -144,7 +166,7 @@ void MainWindow::render()
         this->m_contentViewport->getRenderControl()->endFrame();
     }
 
-    if (this->m_contentViewport->getStatus() == Viewport::Status::Ready)
+    if (this->m_hostViewport->getStatus() == Viewport::Status::Ready)
     {
         this->m_hostViewport->getRenderControl()->beginFrame();
         this->m_hostViewport->getRenderControl()->polishItems();
@@ -171,20 +193,11 @@ void MainWindow::requestUpdate()
 }
 
 void MainWindow::handleHostViewportStatusChange(Viewport::Status status) {
-    qDebug() << "onHostViewportInitalised";
+    qDebug() << "handleHostViewportStatusChange";
     if (status == Viewport::Status::Ready)
     {
         this->show();
-        this->m_contentViewport->setSource(QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
-    }
-}
 
-void MainWindow::handleContentViewportStatusChange(Viewport::Status status) {
-    qDebug() << "onContentViewportInitalised";
-    //this->m_contentViewport->setSource(QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
-
-    if (status == Viewport::Status::Ready)
-    {
         // Set the initial url if provided
         QString initialUrl = QString(qgetenv("CANONIC_INITIAL_URL"));
         if(initialUrl.length())
@@ -197,6 +210,10 @@ void MainWindow::handleContentViewportStatusChange(Viewport::Status status) {
 
         this->mainUILoaded();
     }
+}
+
+void MainWindow::handleContentViewportStatusChange(Viewport::Status status) {
+    qDebug() << "handleContentViewportStatusChange";
 }
 
 void MainWindow::handleScreenChange()
@@ -556,36 +573,11 @@ QQmlEngine* MainWindow::getQmlEngine() const
     return this->m_hostViewport->getQmlEngine();
 }
 
-void MainWindow::refresh()
-{
-    this->m_contentViewport->reloadTLISource();
-    /*
-    if(this->m_rootItem != nullptr)
-    {
-        QUrl tmp = m_rootItem->property("source").toString();
-        m_rootItem->setProperty("source", QUrl(""));
-        this->m_qmlEngine->clearComponentCache();
-        this->resetThemeComponent();
-        m_rootItem->setProperty("source", tmp);
-    }
-    */
-}
-
 void MainWindow::setActiveViewIndex(int activeViewIndex)
 {
     std::cout << "setActiveViewIndex: " << activeViewIndex << std::endl;
     this->m_activeViewIndex = activeViewIndex;
     emit this->activeViewIndexChanged(activeViewIndex);
-
-    /*
-    if(activeViewIndex >= 0 && activeViewIndex < this->viewCount())
-    {
-        this->m_contentViewport->setTLISource(this->view(activeViewIndex)->getQmlSource());
-    }
-    else {
-        this->m_contentViewport->setTLISource(QUrl(""));
-    }
-    */
 }
 
 View *MainWindow::getActiveView() const
@@ -629,9 +621,4 @@ void MainWindow::updateGlobalHistory(QString href)
     }
 
     this->m_shouldIncrementHistoryIndex = true;
-}
-
-void MainWindow::refreshMainUI()
-{
-    this->refresh();
 }

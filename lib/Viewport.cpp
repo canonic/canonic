@@ -84,7 +84,7 @@ void Viewport::setSource(QUrl source)
     else {
         this->setStatus(Viewport::Status::Loading);
 
-        this->m_qmlComponent = new QQmlComponent(this->m_qmlEngine, source);
+        this->m_qmlComponent = new QQmlComponent(this->m_qmlEngine, source, QQmlComponent::CompilationMode::Asynchronous);
         if (this->m_qmlComponent->isLoading())
         {
             connect(this->m_qmlComponent, &QQmlComponent::statusChanged,
@@ -94,6 +94,26 @@ void Viewport::setSource(QUrl source)
         {
             this->handleComponentStatusChange();
         }
+    }
+}
+
+void Viewport::setData(const QByteArray &data, QUrl source)
+{
+    qDebug() << data.length() << " | " << source;
+    this->m_source = source;
+
+    this->setStatus(Viewport::Status::Loading);
+    this->m_qmlComponent = new QQmlComponent(this->m_qmlEngine);
+    this->m_qmlComponent->setData(data, source);
+
+    if (this->m_qmlComponent->isLoading())
+    {
+        connect(this->m_qmlComponent, &QQmlComponent::statusChanged,
+                this, &Viewport::handleComponentStatusChange);
+    }
+    else
+    {
+        this->handleComponentStatusChange();
     }
 }
 
