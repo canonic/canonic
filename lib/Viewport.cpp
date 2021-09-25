@@ -83,10 +83,7 @@ void Viewport::setSource(QUrl source)
     }
     else {
         this->setStatus(Viewport::Status::Loading);
-    }
 
-    if (source.toString() != "")
-    {
         this->m_qmlComponent = new QQmlComponent(this->m_qmlEngine, source);
         if (this->m_qmlComponent->isLoading())
         {
