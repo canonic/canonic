@@ -14,6 +14,22 @@ HostViewport::HostViewport(MainWindow *mainWindow,
     this->m_qmlEngine->rootContext()->setContextProperty("mainWindow", m_mainWindow);
 }
 
+void HostViewport::updateItemSizes(QSize newSize)
+{
+    // Set the QQUickWindows content items size
+    QQuickItem *contentItem = this->contentItem();
+    if (contentItem != nullptr){
+        contentItem->setWidth(newSize.width());
+        contentItem->setHeight(newSize.height());
+    }
+
+    // Set the root items items size
+    if (m_rootItem != nullptr){
+        this->m_rootItem->setWidth(newSize.width());
+        this->m_rootItem->setHeight(newSize.height());
+    }
+}
+
 void HostViewport::enableForwardEvents()
 {
     this->m_forwardEvents = true;

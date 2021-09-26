@@ -177,18 +177,7 @@ void Viewport::updateSizes()
         this->m_textureSize = QSize(1,1);
     }
 
-    // Set the QQUickWindows content items size
-    QQuickItem *contentItem = this->contentItem();
-    if (contentItem != nullptr){
-        contentItem->setWidth(newSize.width());
-        contentItem->setHeight(newSize.height());
-    }
-
-    // Set the root items items size
-    if (m_rootItem != nullptr){
-        this->m_rootItem->setWidth(newSize.width());
-        this->m_rootItem->setHeight(newSize.height());
-    }
+    this->updateItemSizes(newSize);
     this->setGeometry(0, 0, newSize.width(), newSize.height());
 }
 

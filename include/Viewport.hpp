@@ -48,11 +48,11 @@ class Viewport: public QQuickWindow
     Viewport::Status m_status;
 
     void setStatus(Viewport::Status status);
+    virtual void updateItemSizes(QSize newSize) = 0;
 
   private:
     uint m_textureId;
     QSize m_textureSize;
-
     void updateSizes();
 
   private slots:

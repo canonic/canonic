@@ -1,5 +1,6 @@
 #include "../include/ContentViewport.hpp"
 #include "../include/MainWindow.hpp"
+#include "../include/Window.hpp"
 
 ContentViewport::ContentViewport(MainWindow *mainWindow,
                                  RenderControl *renderControl):
@@ -7,6 +8,24 @@ ContentViewport::ContentViewport(MainWindow *mainWindow,
 {
     this->setObjectName("ContentViewport");
     //connect(this, &Viewport::initalised, this, &ContentViewport::reloadTLISource);
+}
+
+void ContentViewport::updateItemSizes(QSize newSize)
+{
+    // Set the QQUickWindows content items size
+    QQuickItem *contentItem = this->contentItem();
+    if (contentItem != nullptr){
+        contentItem->setWidth(newSize.width());
+        contentItem->setHeight(newSize.height());
+        contentItem->setX(this->m_mainWindow->m_window->getInnerScreenX());
+        contentItem->setY(this->m_mainWindow->m_window->getInnerScreenY());
+    }
+
+    // Set the root items items size
+    if (m_rootItem != nullptr){
+        this->m_rootItem->setWidth(newSize.width());
+        this->m_rootItem->setHeight(newSize.height());
+    }
 }
 
 void ContentViewport::setTLISource(QUrl source)

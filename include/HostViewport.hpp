@@ -14,6 +14,7 @@ class HostViewport: public Viewport
     explicit HostViewport(MainWindow *mainWindow,
                           RenderControl *renderControl);
 
+    void updateItemSizes(QSize newSize) override;
     void enableForwardEvents();
     void setForwardEvents(bool forwardEvents);
 
