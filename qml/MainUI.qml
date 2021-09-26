@@ -416,7 +416,7 @@ Metonym.ThemedItem {
 
         width: parent.width > 500? Math.min(parent.width, 460 * 1.61803) - 40: parent.width
         height: parent.width > 500? Math.min(parent.width, 460) - 40: parent.height
-        dim: true
+        modal: true
 
         padding: 0
 
