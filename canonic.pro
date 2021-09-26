@@ -42,6 +42,7 @@ SOURCES += \
         lib/RenderControl.cpp \
         lib/URISyntaxHighlighter.cpp \
         lib/Viewport.cpp \
+        lib/ViewportIncubator.cpp \
         lib/Window.cpp \
         main.cpp
 
@@ -89,6 +90,8 @@ HEADERS += \
     include/View.hpp \
     include/Viewport.fwd.hpp \
     include/Viewport.hpp \
+    include/ViewportIncubator.fwd.hpp \
+    include/ViewportIncubator.hpp \
     include/Window.fwd.hpp \
     include/Window.hpp
 

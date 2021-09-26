@@ -35,6 +35,8 @@ Viewport::Viewport(MainWindow *mainWindow, RenderControl* renderControl):
     // Create connections
     connect(this, &QQuickWindow::sceneGraphInitialized, this, &Viewport::createTexture);
     connect(this, &QQuickWindow::sceneGraphInvalidated, this, &Viewport::destroyTexture);
+    connect(&this->m_incubator, &ViewportIncubator::statusChangedSignal,
+            this, &Viewport::handleIncubatorStatusChange);
 }
 
 Viewport::~Viewport()
@@ -238,7 +240,8 @@ void Viewport::destroyTexture()
 
 void Viewport::handleComponentStatusChange()
 {
-    disconnect(this->m_qmlComponent, &QQmlComponent::statusChanged, this, &Viewport::handleComponentStatusChange);
+    disconnect(this->m_qmlComponent, &QQmlComponent::statusChanged,
+               this, &Viewport::handleComponentStatusChange);
 
     if (this->m_qmlComponent->isError()) {
         QString errorString;
@@ -254,21 +257,43 @@ void Viewport::handleComponentStatusChange()
         return;
     }
 
-    QObject *rootObject = this->m_qmlComponent->create();
-    if (this->m_qmlComponent->isError()) {
-        QString errorString;
-        const QList<QQmlError> errorList = this->m_qmlComponent->errors();
-        for (const QQmlError &error : errorList)
+    this->m_incubator.clear();
+    this->m_qmlComponent->create(this->m_incubator);
+}
+
+void Viewport::handleIncubatorStatusChange(QQmlIncubator::Status status)
+{
+    switch(this->m_incubator.status())
+    {
+        case QQmlIncubator::Null:
         {
-            errorString += error.url().toString();
-            errorString += QString::number(error.line());
-            errorString += error.toString();
+            return;
         }
-        this->setErrorString(errorString);
-        this->setStatus(Viewport::Status::ObjectCreationError);
-        return;
+        case QQmlIncubator::Loading:
+        {
+            return;
+        }
+        case QQmlIncubator::Error:
+        {
+            QString errorString;
+            const QList<QQmlError> errorList = this->m_incubator.errors();
+            for (const QQmlError &error : errorList)
+            {
+                errorString += error.url().toString();
+                errorString += QString::number(error.line());
+                errorString += error.toString();
+            }
+            this->setErrorString(errorString);
+            this->setStatus(Viewport::Status::ObjectCreationError);
+            return;
+        }
+        case QQmlIncubator::Ready:
+        {
+            break;
+        }
     }
 
+    QObject *rootObject = this->m_incubator.object();
     this->m_rootItem = qobject_cast<QQuickItem *>(rootObject);
     if (!this->m_rootItem) {
         this->setErrorString("Not a QQuickItem");

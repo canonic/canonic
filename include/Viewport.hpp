@@ -5,6 +5,8 @@
 
 #include "RenderControl.fwd.hpp"
 #include "MainWindow.fwd.hpp"
+#include "ViewportIncubator.hpp"
+
 
 class Viewport: public QQuickWindow
 {
@@ -57,10 +59,12 @@ class Viewport: public QQuickWindow
     uint m_textureId;
     QSize m_textureSize;
     QString m_errorString;
+    ViewportIncubator m_incubator;
     void updateSizes();
 
   private slots:
     void createTexture();
     void destroyTexture();
     void handleComponentStatusChange();
+    void handleIncubatorStatusChange(QQmlIncubator::Status status);
 };
