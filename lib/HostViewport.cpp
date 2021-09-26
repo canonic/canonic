@@ -34,6 +34,11 @@ void HostViewport::updateItemSizes(QSize newSize)
 void HostViewport::enableForwardEvents()
 {
     this->m_forwardEvents = true;
+    ContentViewport *contentViewport = this->m_mainWindow->m_contentViewport;
+    if (contentViewport)
+    {
+        contentViewport->contentItem()->forceActiveFocus();
+    }
 }
 
 void HostViewport::setForwardEvents(bool forwardEvents)

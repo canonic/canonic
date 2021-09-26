@@ -258,6 +258,7 @@ void Viewport::handleComponentStatusChange()
 
     // The root item is ready. Associate it with the window.
     this->m_rootItem->setParentItem(this->contentItem());
+    this->contentItem()->forceActiveFocus();
 
     // Update item and rendering related geometries.
     this->updateSizes();
