@@ -15,16 +15,16 @@ void ContentViewport::updateItemSizes(QSize newSize)
     // Set the QQUickWindows content items size
     QQuickItem *contentItem = this->contentItem();
     if (contentItem != nullptr){
-        contentItem->setWidth(newSize.width());
-        contentItem->setHeight(newSize.height());
+        contentItem->setWidth(this->m_mainWindow->m_window->getInnerWidth());
+        contentItem->setHeight(this->m_mainWindow->m_window->getInnerHeight());
         contentItem->setX(this->m_mainWindow->m_window->getInnerScreenX());
         contentItem->setY(this->m_mainWindow->m_window->getInnerScreenY());
     }
 
     // Set the root items items size
     if (m_rootItem != nullptr){
-        this->m_rootItem->setWidth(newSize.width());
-        this->m_rootItem->setHeight(newSize.height());
+        this->m_rootItem->setWidth(this->m_mainWindow->m_window->getInnerWidth());
+        this->m_rootItem->setHeight(this->m_mainWindow->m_window->getInnerHeight());
     }
 }
 
