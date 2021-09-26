@@ -26,6 +26,9 @@ MainWindow::MainWindow()
 {
     this->resize(1600, 1000);
 
+    // Use dark theme by default
+    this->m_theme = "dark";
+
     this->m_auth = new Auth();
     this->m_networkAccessManagerFactory = new NetworkAccessManagerFactory(this);
     this->m_window = new WebAPI::Window(this);
@@ -484,23 +487,6 @@ bool MainWindow::get_OS_WASM() const
 #endif
 }
 
-QUrl MainWindow::getThemeSource()
-{
-    return this->m_themeSource;
-}
-
-void MainWindow::setThemeSource(QUrl themeSource)
-{
-    this->m_themeSource = themeSource;
-    this->getThemeComponent()->loadUrl(themeSource);
-
-    emit this->themeSourceChanged();
-
-    // Emit themeComponentChanged because if the source changes then qml documents using the theme component need
-    // to know to update
-    emit this->themeComponentChanged();
-}
-
 QUrl MainWindow::getHomePageUrl()
 {
     return this->m_homePageUrl;
@@ -510,29 +496,6 @@ void MainWindow::setHomePageUrl(QUrl homePageUrl)
 {
     this->m_homePageUrl = homePageUrl;
     emit this->homePageUrlChanged();
-}
-
-void MainWindow::resetThemeComponent()
-{
-    QQmlComponent *oldThemeComponent = this->getThemeComponent();
-    this->m_themeComponent = nullptr;
-    oldThemeComponent->deleteLater();
-    emit this->themeComponentChanged();
-}
-
-QQmlComponent *MainWindow::getThemeComponent()
-{
-    if (this->m_themeComponent == nullptr)
-    {
-        this->m_themeComponent = new QQmlComponent(this->getQmlEngine(), QUrl{this->getThemeSource()});
-    }
-    return this->m_themeComponent;
-}
-
-void MainWindow::setThemeComponent(QQmlComponent *themeComponent)
-{
-    this->m_themeComponent = themeComponent;
-    emit this->themeComponentChanged();
 }
 
 QString MainWindow::getBuild() const
@@ -551,6 +514,17 @@ void MainWindow::setBuild(QString build)
         build.toStdString().c_str()
     );
 #endif
+}
+
+QString MainWindow::getTheme() const
+{
+    return this->m_theme;
+}
+
+void MainWindow::setTheme(QString theme)
+{
+    this->m_theme = theme;
+    emit this->themeChanged();
 }
 
 void MainWindow::mainUILoaded() const

@@ -6,8 +6,6 @@ import com.mycompany.qmlcomponents 1.0
 Item {
     id: root
 
-    readonly property var theme: mainWindow.themeComponent.createObject(this)
-
     HostEventPropagator {
         id: hostEventPropagator
         anchors.fill: parent
@@ -17,12 +15,14 @@ Item {
         onClearHostViewportFocus: hostEventPropagator.forceActiveFocus()
     }
 
-    MainUI {
-        theme: root.theme
-    }
-
-    Component.onCompleted: {
-        window.theme = theme
+    Loader {
+        anchors.fill: parent
+        sourceComponent: Component {
+            MainUI {
+                theme: Metonym.Styles.theme
+            }
+        }
+        active: Metonym.Styles.themesLoaded
     }
 
     layer.enabled: true

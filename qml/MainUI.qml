@@ -16,7 +16,7 @@ Metonym.ThemedItem {
 
     QtObject {
         id: __hiddenProps
-        readonly property QtObject lightTheme: Metonym.CanonicLightTheme {}
+        readonly property QtObject lightTheme: Metonym.Styles.lightThemeLoader.item
     }
 
     Metonym.Pane {
@@ -239,20 +239,21 @@ Metonym.ThemedItem {
             }
 
             icon.source: {
-                const themeSource = mainWindow.themeSource
+                const theme = mainWindow.theme
 
-                if (themeSource.toString() === Metonym.Constants.CANONIC_LIGHT_THEME_SOURCE)
+                if (theme === Metonym.Constants.CANONIC_THEME_LIGHT)
                     return root.theme.icons.day
 
                 return root.theme.icons.night
             }
 
             onClicked: {
-                const themeSource = mainWindow.themeSource
-                if (themeSource.toString() === Metonym.Constants.CANONIC_LIGHT_THEME_SOURCE)
-                    mainWindow.setThemeSource(Metonym.Constants.CANONIC_DARK_THEME_SOURCE)
+                const theme = mainWindow.theme
+
+                if (theme === Metonym.Constants.CANONIC_THEME_LIGHT)
+                    mainWindow.theme = Metonym.Constants.CANONIC_THEME_DARK
                 else
-                    mainWindow.setThemeSource(Metonym.Constants.CANONIC_LIGHT_THEME_SOURCE)
+                    mainWindow.theme = Metonym.Constants.CANONIC_THEME_LIGHT
             }
         }
 

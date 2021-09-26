@@ -20,9 +20,7 @@ namespace WebAPI {
         Q_PROPERTY(int outerWidth READ getOuterWidth NOTIFY outerWidthChanged)
         Q_PROPERTY(int outerHeight READ getOuterHeight NOTIFY outerHeightChanged)
         Q_PROPERTY(Document *document READ getDocument NOTIFY documentChanged)
-        Q_PROPERTY(QUrl themeSource READ getThemeSource WRITE setThemeSource NOTIFY themeSourceChanged)
-        Q_PROPERTY(QUrl viewSource READ getViewSource NOTIFY viewSourceChanged)
-        Q_PROPERTY(QQmlComponent *themeComponent READ getThemeComponent NOTIFY themeComponentChanged)
+        Q_PROPERTY(QString theme READ getTheme NOTIFY themeChanged)
 
       public:
         explicit Window(MainWindow *mainWindow, QObject *parent = nullptr);
@@ -41,13 +39,7 @@ namespace WebAPI {
         void handleWindowResize();
         Document *getDocument() const;
 
-        QUrl getThemeSource() const;
-        void setThemeSource(QUrl themeSource);
-
-        QUrl getViewSource() const;
-
-        QQmlComponent *getThemeComponent();
-
+        QString getTheme() const;
 
         Q_INVOKABLE
         QString btoa(QString str) const;
@@ -67,9 +59,8 @@ namespace WebAPI {
         void outerWidthChanged(int location);
         void outerHeightChanged(int location);
         void documentChanged(WebAPI::Document *document);
-        void themeSourceChanged();
         void viewSourceChanged();
-        void themeComponentChanged();
+        void themeChanged();
 
       private slots:
         void handleLocationHrefChange(QString href, bool hardReload);

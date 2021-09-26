@@ -28,22 +28,18 @@ class MainWindow: public QWindow
     Q_PROPERTY(int activeViewIndex READ getActiveViewIndex WRITE setActiveViewIndex NOTIFY activeViewIndexChanged)
     Q_PROPERTY(Auth *auth READ getAuth CONSTANT)
     Q_PROPERTY(bool OS_WASM READ get_OS_WASM CONSTANT)
-    Q_PROPERTY(QUrl themeSource READ getThemeSource WRITE setThemeSource NOTIFY themeSourceChanged)
     Q_PROPERTY(QUrl homePage READ getHomePageUrl WRITE setHomePageUrl NOTIFY homePageUrlChanged)
-
-    // todo create a separate theme component for the virtualised qmlengines (when we add them)
-    Q_PROPERTY(QQmlComponent *themeComponent READ getThemeComponent WRITE setThemeComponent NOTIFY themeComponentChanged)
     Q_PROPERTY(QString build READ getBuild WRITE setBuild NOTIFY buildChanged)
+    Q_PROPERTY(QString theme READ getTheme WRITE setTheme NOTIFY themeChanged)
 
   signals:
     void viewsChanged();
     void historyItemsChanged();
     void historyIndexChanged();
     void activeViewIndexChanged(int activeViewIndex);
-    void themeSourceChanged();
-    void themeComponentChanged();
     void homePageUrlChanged();
     void buildChanged();
+    void themeChanged();
 
   public:
     MainWindow();
@@ -80,31 +76,19 @@ class MainWindow: public QWindow
     bool get_OS_WASM() const;
 
     Q_INVOKABLE
-    QUrl getThemeSource();
-
-    Q_INVOKABLE
-    void setThemeSource(QUrl themeSource);
-
-    Q_INVOKABLE
     QUrl getHomePageUrl();
 
     Q_INVOKABLE
     void setHomePageUrl(QUrl homePageUrl);
-
-    Q_INVOKABLE
-    QQmlComponent *getThemeComponent();
-
-    Q_INVOKABLE
-    void setThemeComponent(QQmlComponent *themeComponent);
-
-    Q_INVOKABLE
-    void resetThemeComponent();
 
     QString getBuild() const;
     void setBuild(QString build);
 
     QQmlEngine* getQmlEngine() const;
     void resetContentViewport();
+
+    QString getTheme() const;
+    void setTheme(QString theme);
 
     /**
      * Used to hide the loading spinner in wasm distributions.
@@ -142,9 +126,8 @@ class MainWindow: public QWindow
     bool m_shouldIncrementHistoryIndex{true};
     short m_historyIndex{-1};
     QVector<HistoryItem *> m_history;
-    QUrl m_themeSource{"https://www.canonic.com/metonym/release/Metonym/CanonicDarkTheme.qml"};
     QUrl m_homePageUrl{"https://raw.githubusercontent.com/canonic/canonic-qml-web-directory/main/main.qml"};
-    QQmlComponent *m_themeComponent{nullptr};
+    QString m_theme;
 
     QOpenGLContext *m_context;
     QOffscreenSurface *m_offscreenSurface;

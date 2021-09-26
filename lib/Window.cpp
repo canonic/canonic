@@ -20,6 +20,9 @@ namespace WebAPI {
 
         QObject::connect(this->m_mainWindow, &MainWindow::activeViewIndexChanged,
             this, &Window::viewSourceChanged);
+
+        QObject::connect(this->m_mainWindow, &MainWindow::themeChanged,
+            this, &Window::themeChanged);
     }
 
     Location *Window::getLocation() const {
@@ -70,29 +73,9 @@ namespace WebAPI {
         return this->m_document;
     }
 
-    QUrl Window::getThemeSource() const
+    QString Window::getTheme() const
     {
-        return this->m_mainWindow->getThemeSource();
-    }
-
-    void Window::setThemeSource(QUrl themeSource)
-    {
-        this->m_mainWindow->setThemeSource(themeSource);
-        emit themeSourceChanged();
-    }
-
-    QUrl Window::getViewSource() const
-    {
-        View *activeView = this->m_mainWindow->getActiveView();
-        if (activeView == nullptr) {
-            return QUrl("");
-        }
-        return activeView->getQmlSource();
-    }
-
-    QQmlComponent * Window::getThemeComponent()
-    {
-        return this->m_mainWindow->getThemeComponent();
+        return this->m_mainWindow->getTheme();
     }
 
     QString Window::btoa(QString str) const
