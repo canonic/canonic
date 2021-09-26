@@ -22,7 +22,9 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(): m_uploadProgress{0}, m_downloadProgress{0}
+MainWindow::MainWindow(): m_uploadProgress{0},
+    m_downloadProgress{0},
+    m_mainUILoaded{false}
 {
     this->resize(1600, 1000);
 
@@ -213,14 +215,17 @@ void MainWindow::handleHostViewportStatusChange(Viewport::Status status) {
         else {
             this->m_window->getLocation()->setHref("");
         }
-
-        this->mainUILoaded();
     }
 }
 
 void MainWindow::handleContentViewportStatusChange(Viewport::Status status) {
     qDebug() << "handleContentViewportStatusChange";
     emit this->contentViewportStatusChanged();
+
+    if (status == Viewport::Status::Ready)
+    {
+        this->mainUILoaded();
+    }
 }
 
 void MainWindow::handleScreenChange()
@@ -569,19 +574,23 @@ QString MainWindow::getContentViewportErrorString() const
     return this->m_contentViewport->getErrorString();
 }
 
-void MainWindow::mainUILoaded() const
+void MainWindow::mainUILoaded()
 {
+    if (!this->m_mainUILoaded) {
+        this->m_mainUILoaded = true;
+
 #ifdef Q_OS_WASM
-    EM_ASM(
-        if(window.canonic === undefined)
-        {
-            console.error("window.canonic is undefined. Are you running in a dev enironment?")
-        }
-        else {
-            window.canonic.__hideSpinner()
-        }
-    );
+        EM_ASM(
+            if(window.canonic === undefined)
+            {
+                console.error("window.canonic is undefined. Are you running in a dev enironment?")
+            }
+            else {
+                window.canonic.__hideSpinner()
+            }
+        );
 #endif
+    }
 }
 
 QQmlEngine* MainWindow::getQmlEngine() const

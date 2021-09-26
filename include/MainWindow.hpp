@@ -111,7 +111,7 @@ class MainWindow: public QWindow
      * Used to hide the loading spinner in wasm distributions.
      */
     Q_INVOKABLE
-    void mainUILoaded() const;
+    void mainUILoaded();
 
     Q_INVOKABLE
     void previousPage();
@@ -162,6 +162,7 @@ class MainWindow: public QWindow
 
   private:
     QRectF getNormalisedViewportGeometry() const;
+    bool m_mainUILoaded;
 
   public slots:
     void updateGlobalHistory(QString href);
