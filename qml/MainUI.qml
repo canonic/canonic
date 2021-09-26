@@ -396,10 +396,24 @@ Metonym.ThemedItem {
                 Metonym.BusyIndicator {
                     running: true
                     anchors.horizontalCenter: parent.horizontalCenter
+                    visible: mainWindow.contentViewportStatus <= 2
                 }
 
                 Metonym.Label {
-                    text: mainWindow.downloadProgress + ' Bytes'
+                    text: {
+                        if (mainWindow.contentViewportStatus === 0)
+                        {
+                            return mainWindow.downloadProgress + ' Bytes '
+                        }
+                        else if (mainWindow.contentViewportStatus <= 2)
+                        {
+                            return 'Compiling component'
+                        }
+                        else if (mainWindow.contentViewportStatus > 2)
+                        {
+                            return 'QML Error'
+                        }
+                    }
                     fontGroup: root.theme.font3
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: root.theme.setColourAlpha(root.theme.brand, 0.8)
@@ -407,7 +421,7 @@ Metonym.ThemedItem {
             }
         }
 
-        opacity: (window.document.readyState === "loading") ? 1 : 0
+        opacity: (mainWindow.contentViewportStatus !== 2) ? 1 : 0
         visible: opacity > 0
 
         Behavior on opacity {

@@ -33,6 +33,7 @@ class MainWindow: public QWindow
     Q_PROPERTY(QString theme READ getTheme WRITE setTheme NOTIFY themeChanged)
     Q_PROPERTY(qint64 uploadProgress READ getUploadProgress NOTIFY uploadProgressChanged)
     Q_PROPERTY(qint64 downloadProgress READ getDownloadProgress NOTIFY downloadProgressChanged)
+    Q_PROPERTY(Viewport::Status contentViewportStatus READ getContentViewportStatus NOTIFY contentViewportStatusChanged)
 
   signals:
     void viewsChanged();
@@ -44,6 +45,7 @@ class MainWindow: public QWindow
     void themeChanged();
     void uploadProgressChanged(qint64 bytesSent, qint64 bytesTotal);
     void downloadProgressChanged(qint64 bytesReceived, qint64 bytesTotal);
+    void contentViewportStatusChanged();
 
   public:
     MainWindow();
@@ -99,6 +101,8 @@ class MainWindow: public QWindow
 
     qint64 getDownloadProgress() const;
     void setDownloadProgress(qint64 bytesRecieved, qint64 bytesTotal);
+
+    Viewport::Status getContentViewportStatus() const;
 
     /**
      * Used to hide the loading spinner in wasm distributions.

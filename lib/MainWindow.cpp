@@ -217,6 +217,7 @@ void MainWindow::handleHostViewportStatusChange(Viewport::Status status) {
 
 void MainWindow::handleContentViewportStatusChange(Viewport::Status status) {
     qDebug() << "handleContentViewportStatusChange";
+    emit this->contentViewportStatusChanged();
 }
 
 void MainWindow::handleScreenChange()
@@ -547,6 +548,14 @@ void MainWindow::setDownloadProgress(qint64 bytesRecieved, qint64 bytesTotal)
 {
     this->m_downloadProgress = bytesRecieved;
     emit this->downloadProgressChanged(bytesRecieved, bytesTotal);
+}
+
+Viewport::Status MainWindow::getContentViewportStatus() const
+{
+    if (this->m_contentViewport == nullptr)
+        return Viewport::Status::Null;
+
+    return this->m_contentViewport->getStatus();
 }
 
 void MainWindow::mainUILoaded() const

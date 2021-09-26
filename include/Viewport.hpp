@@ -12,12 +12,12 @@ class Viewport: public QQuickWindow
 
   public:
     enum class Status {
-        Null,
-        Loading,
+        Null = 0,
+        Loading = 1,
+        Ready = 2,
         ComponentError,
         ObjectCreationError,
         NotAnItemError,
-        Ready,
     };
 
     explicit Viewport(MainWindow *mainWindow, RenderControl* renderControl);
