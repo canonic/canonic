@@ -578,6 +578,12 @@ void MainWindow::setActiveViewIndex(int activeViewIndex)
     std::cout << "setActiveViewIndex: " << activeViewIndex << std::endl;
     this->m_activeViewIndex = activeViewIndex;
     emit this->activeViewIndexChanged(activeViewIndex);
+
+    if(activeViewIndex >= 0 && activeViewIndex < this->viewCount())
+    {
+        this->m_contentViewport->setData(this->view(activeViewIndex)->process(this->m_window->getDocument()->getRawData()),
+                                         this->m_window->getLocation()->getHref());
+    }
 }
 
 View *MainWindow::getActiveView() const

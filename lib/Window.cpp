@@ -2,7 +2,7 @@
 #include <QDesktopServices>
 
 #include "../include/Window.hpp"
-#include "../include/View.hpp"
+#include "../include/QMLView.hpp"
 
 #include <iostream>
 
@@ -199,15 +199,18 @@ namespace WebAPI {
         QJsonObject objectType;
         QJsonObject objectValue;
 
+
         if(reply->error())
         {
             std::cout << "reply has an error" << std::endl;
             std::cout << reply->errorString().toStdString() << std::endl;
-
+            /*
             View *networkErrorView = new View{"Network Error View", QUrl{""}, QUrl{"qrc:/qml/NetworkErrorView.qml"}};
             this->m_mainWindow->appendView(networkErrorView);
+            */
         }
         else {
+            /*
             // Debug view is always supported
             View *debugView = new View{"Debug View", QUrl{""}, QUrl{"qrc:/qml/DebugView.qml"}};
             this->m_mainWindow->appendView(debugView);
@@ -267,22 +270,25 @@ namespace WebAPI {
                     }
                 }
             }
+            */
 
             QVariant contentType = reply->header(QNetworkRequest::ContentTypeHeader);
 
+            /*
             if (contentType.isValid() && contentType.toString().contains("text/html"))
             {
                 View *htmlDocumentView = new View{"HTML Document View", QUrl{""}, QUrl{"qrc:/qml/HTMLDocumentView.qml"}};
                 this->m_mainWindow->appendView(htmlDocumentView);
                 activeViewIndex++;
             }
+            */
 
             if(reply->url().path().endsWith(".qml", Qt::CaseInsensitive) ||
                 (contentType.isValid() && contentType.toString().contains("text/qml")))
             {
-                View *qmlDocumentView = new View{"QML Document View", QUrl{""}, QUrl{"qrc:/qml/QMLDocumentView.qml"}};
+                View *qmlDocumentView = new QMLView{};
                 this->m_mainWindow->appendView(qmlDocumentView);
-                activeViewIndex++;
+                //activeViewIndex++;
             }
         }
 
@@ -292,12 +298,14 @@ namespace WebAPI {
         this->m_mainWindow->setActiveViewIndex(activeViewIndex);
         this->m_mainWindow->updateGlobalHistory(this->m_location->getHref());
 
+        /*
         QFile file("://qml/TLI.qml");
         if (file.open(QIODevice::ReadOnly))
         {
             this->m_mainWindow->m_contentViewport->setData(file.readAll(), QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
             file.close();
         }
+        */
 
         reply->deleteLater();
         std::cout << "Finished Request" << std::endl;
