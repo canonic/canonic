@@ -48,9 +48,7 @@ void HostViewport::setForwardEvents(bool forwardEvents)
 
 bool HostViewport::event(QEvent *e)
 {
-    //qDebug() << e << m_forwardEvents;
     if (this->m_forwardEvents)
-    //if (true)
     {
         switch(e->type())
         {

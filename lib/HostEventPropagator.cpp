@@ -32,16 +32,13 @@ void HostEventPropagator::mousePressEvent(QMouseEvent *event)
 
     HostEventPropagator::m_hostViewport->enableForwardEvents();
 
-    // Post the event otherwise it can crash the application. Handling the
-    // same event twice causes issues.
-    QCoreApplication::postEvent(m_hostViewport, event->clone());
+    QCoreApplication::sendEvent(m_hostViewport, event);
 }
 
 void HostEventPropagator::wheelEvent(QWheelEvent *event)
 {
     HostEventPropagator::m_hostViewport->enableForwardEvents();
 
-    // Does not appear to cause any crashes like the mousePressEvent
     QCoreApplication::sendEvent(m_hostViewport, event);
 }
 
