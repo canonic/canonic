@@ -29,6 +29,7 @@ class Viewport: public QQuickWindow
     QUrl getSource() const;
     void setSource(QUrl source);
     void setData(const QByteArray &data, QUrl source);
+    QString getErrorString() const;
 
     Viewport::Status getStatus() const;
     uint getTextureId() const;
@@ -36,6 +37,7 @@ class Viewport: public QQuickWindow
 
   signals:
     void statusChanged(Viewport::Status status);
+    void errorStringChanged(QString errorString);
 
   protected:
     MainWindow *m_mainWindow;
@@ -49,10 +51,12 @@ class Viewport: public QQuickWindow
 
     void setStatus(Viewport::Status status);
     virtual void updateItemSizes(QSize newSize) = 0;
+    void setErrorString(QString errorString);
 
   private:
     uint m_textureId;
     QSize m_textureSize;
+    QString m_errorString;
     void updateSizes();
 
   private slots:

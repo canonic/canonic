@@ -116,6 +116,18 @@ void Viewport::setData(const QByteArray &data, QUrl source)
     }
 }
 
+QString Viewport::getErrorString() const
+{
+    return this->m_errorString;
+}
+
+void Viewport::setErrorString(QString errorString)
+{
+    qWarning() << errorString;
+    this->m_errorString = errorString;
+    emit this->errorStringChanged(errorString);
+}
+
 Viewport::Status Viewport::getStatus() const
 {
     return this->m_status;
@@ -229,29 +241,38 @@ void Viewport::handleComponentStatusChange()
     disconnect(this->m_qmlComponent, &QQmlComponent::statusChanged, this, &Viewport::handleComponentStatusChange);
 
     if (this->m_qmlComponent->isError()) {
+        QString errorString;
         const QList<QQmlError> errorList = this->m_qmlComponent->errors();
         for (const QQmlError &error : errorList)
-            qWarning() << error.url() << error.line() << error;
-
+        {
+            errorString += error.url().toString();
+            errorString += QString::number(error.line());
+            errorString += error.toString();
+        }
+        this->setErrorString(errorString);
         this->setStatus(Viewport::Status::ComponentError);
         return;
     }
 
     QObject *rootObject = this->m_qmlComponent->create();
     if (this->m_qmlComponent->isError()) {
+        QString errorString;
         const QList<QQmlError> errorList = this->m_qmlComponent->errors();
         for (const QQmlError &error : errorList)
-            qWarning() << error.url() << error.line() << error;
-
+        {
+            errorString += error.url().toString();
+            errorString += QString::number(error.line());
+            errorString += error.toString();
+        }
+        this->setErrorString(errorString);
         this->setStatus(Viewport::Status::ObjectCreationError);
         return;
     }
 
     this->m_rootItem = qobject_cast<QQuickItem *>(rootObject);
     if (!this->m_rootItem) {
-        qWarning("run: Not a QQuickItem");
+        this->setErrorString("Not a QQuickItem");
         delete rootObject;
-
         this->setStatus(Viewport::Status::NotAnItemError);
         return;
     }

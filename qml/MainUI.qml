@@ -411,7 +411,7 @@ Metonym.ThemedItem {
                         }
                         else if (mainWindow.contentViewportStatus > 2)
                         {
-                            return 'QML Error'
+                            return 'QML Error:\n' + mainWindow.contentViewportErrorString
                         }
                     }
                     fontGroup: root.theme.font3

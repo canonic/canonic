@@ -81,6 +81,7 @@ MainWindow::MainWindow(): m_uploadProgress{0}, m_downloadProgress{0}
     // renderRequested (only render is needed, no sync) and sceneChanged (polish
     // and sync is needed too).
     connect(m_contentViewport, &Viewport::statusChanged, this, &MainWindow::handleContentViewportStatusChange);
+    connect(m_contentViewport, &Viewport::errorStringChanged, this, &MainWindow::contentViewportErrorStringChanged);
     connect(m_contentViewport->getRenderControl(), &QQuickRenderControl::renderRequested, this, &MainWindow::requestUpdate);
     connect(m_contentViewport->getRenderControl(), &QQuickRenderControl::sceneChanged, this, &MainWindow::requestUpdate);
 
@@ -115,6 +116,7 @@ void MainWindow::resetContentViewport()
     ContentViewport *tmp = this->m_contentViewport;
     tmp->setSource(QUrl(""));
     disconnect(tmp, &Viewport::statusChanged, this, &MainWindow::handleContentViewportStatusChange);
+    disconnect(tmp, &Viewport::errorStringChanged, this, &MainWindow::contentViewportErrorStringChanged);
     disconnect(tmp->getRenderControl(), &QQuickRenderControl::renderRequested, this, &MainWindow::requestUpdate);
     disconnect(tmp->getRenderControl(), &QQuickRenderControl::sceneChanged, this, &MainWindow::requestUpdate);
 
@@ -122,6 +124,7 @@ void MainWindow::resetContentViewport()
     HostEventPropagator::m_contentViewport = this->m_contentViewport;
 
     connect(this->m_contentViewport, &Viewport::statusChanged, this, &MainWindow::handleContentViewportStatusChange);
+    connect(this->m_contentViewport, &Viewport::errorStringChanged, this, &MainWindow::contentViewportErrorStringChanged);
     connect(this->m_contentViewport->getRenderControl(), &QQuickRenderControl::renderRequested, this, &MainWindow::requestUpdate);
     connect(this->m_contentViewport->getRenderControl(), &QQuickRenderControl::sceneChanged, this, &MainWindow::requestUpdate);
 
@@ -556,6 +559,14 @@ Viewport::Status MainWindow::getContentViewportStatus() const
         return Viewport::Status::Null;
 
     return this->m_contentViewport->getStatus();
+}
+
+QString MainWindow::getContentViewportErrorString() const
+{
+    if (this->m_contentViewport == nullptr)
+        return "";
+
+    return this->m_contentViewport->getErrorString();
 }
 
 void MainWindow::mainUILoaded() const
