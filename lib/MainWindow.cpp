@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(): m_uploadProgress{0}, m_downloadProgress{0}
 {
     this->resize(1600, 1000);
 
@@ -525,6 +525,28 @@ void MainWindow::setTheme(QString theme)
 {
     this->m_theme = theme;
     emit this->themeChanged();
+}
+
+qint64 MainWindow::getUploadProgress() const
+{
+    return this->m_uploadProgress;
+}
+
+void MainWindow::setUploadProgress(qint64 bytesSent, qint64 bytesTotal)
+{
+    this->m_uploadProgress = bytesSent;
+    emit this->downloadProgressChanged(bytesSent, bytesTotal);
+}
+
+qint64 MainWindow::getDownloadProgress() const
+{
+    return this->m_downloadProgress;
+}
+
+void MainWindow::setDownloadProgress(qint64 bytesRecieved, qint64 bytesTotal)
+{
+    this->m_downloadProgress = bytesRecieved;
+    emit this->downloadProgressChanged(bytesRecieved, bytesTotal);
 }
 
 void MainWindow::mainUILoaded() const

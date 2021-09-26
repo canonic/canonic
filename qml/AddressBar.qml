@@ -343,7 +343,6 @@ Metonym.ThemedItem {
             anchors.fill: parent
             sourceComponent: _addressBarInternal
         }
-
     }
 
     Item {

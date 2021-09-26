@@ -388,9 +388,22 @@ Metonym.ThemedItem {
                 right: parent.right
             }
 
-            Metonym.BusyIndicator {
-                running: true
+            Column {
                 anchors.centerIn: parent
+
+                spacing: 8
+
+                Metonym.BusyIndicator {
+                    running: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
+                Metonym.Label {
+                    text: mainWindow.downloadProgress + ' Bytes'
+                    fontGroup: root.theme.font3
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: root.theme.setColourAlpha(root.theme.brand, 0.8)
+                }
             }
         }
 

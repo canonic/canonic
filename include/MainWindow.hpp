@@ -31,6 +31,8 @@ class MainWindow: public QWindow
     Q_PROPERTY(QUrl homePage READ getHomePageUrl WRITE setHomePageUrl NOTIFY homePageUrlChanged)
     Q_PROPERTY(QString build READ getBuild WRITE setBuild NOTIFY buildChanged)
     Q_PROPERTY(QString theme READ getTheme WRITE setTheme NOTIFY themeChanged)
+    Q_PROPERTY(qint64 uploadProgress READ getUploadProgress NOTIFY uploadProgressChanged)
+    Q_PROPERTY(qint64 downloadProgress READ getDownloadProgress NOTIFY downloadProgressChanged)
 
   signals:
     void viewsChanged();
@@ -40,6 +42,8 @@ class MainWindow: public QWindow
     void homePageUrlChanged();
     void buildChanged();
     void themeChanged();
+    void uploadProgressChanged(qint64 bytesSent, qint64 bytesTotal);
+    void downloadProgressChanged(qint64 bytesReceived, qint64 bytesTotal);
 
   public:
     MainWindow();
@@ -90,6 +94,12 @@ class MainWindow: public QWindow
     QString getTheme() const;
     void setTheme(QString theme);
 
+    qint64 getUploadProgress() const;
+    void setUploadProgress(qint64 bytesSent, qint64 bytesTotal);
+
+    qint64 getDownloadProgress() const;
+    void setDownloadProgress(qint64 bytesRecieved, qint64 bytesTotal);
+
     /**
      * Used to hide the loading spinner in wasm distributions.
      */
@@ -128,6 +138,8 @@ class MainWindow: public QWindow
     QVector<HistoryItem *> m_history;
     QUrl m_homePageUrl{"https://raw.githubusercontent.com/canonic/canonic-qml-web-directory/main/main.qml"};
     QString m_theme;
+    qint64 m_uploadProgress;
+    qint64 m_downloadProgress;
 
     QOpenGLContext *m_context;
     QOffscreenSurface *m_offscreenSurface;

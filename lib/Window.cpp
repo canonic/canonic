@@ -155,6 +155,16 @@ namespace WebAPI {
         // Delete the old document object
         previousDoc->deleteLater();
 
+        // reset upload and download progress
+        this->m_mainWindow->setUploadProgress(0, -1);
+        this->m_mainWindow->setDownloadProgress(0, -1);
+
+        this->connect(this->m_networkReply, &QNetworkReply::uploadProgress,
+            this->m_mainWindow, &MainWindow::setUploadProgress);
+
+        this->connect(this->m_networkReply, &QNetworkReply::downloadProgress,
+            this->m_mainWindow, &MainWindow::setDownloadProgress);
+
         this->connect(this->m_networkReply, &QNetworkReply::finished,
             this, &Window::handleFinishedLoadingReply);
 
