@@ -7,7 +7,7 @@ QMLView::QMLView(): View()
 
 QString QMLView::getDisplayName() const
 {
-    return "QML Document View";
+    return "QML View";
 }
 
 

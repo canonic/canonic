@@ -23,29 +23,7 @@ Metonym.ThemedItem {
 
             property alias url: addressBarTextField.text
 
-            property bool containsFocus: {
-                if(_internalRoot.activeFocus)
-                {
-                    return _internalRoot.activeFocus
-                }
-
-                if(__addressBarRightControlsMenuBar.activeFocus)
-                {
-                    return __addressBarRightControlsMenuBar.activeFocus
-                }
-
-                for(var i = 0; i < __addressBarRightControlsMenuBar.count; i++)
-                {
-                    const menu = __addressBarRightControlsMenuBar.menuAt(i)
-
-                    if(menu.activeFocus)
-                    {
-                        return true
-                    }
-                }
-
-                return false
-            }
+            property bool containsFocus: _internalRoot.activeFocus
 
             Timer {
                 id: selectAllTimer
@@ -259,31 +237,43 @@ Metonym.ThemedItem {
                     id: __addressBarRightControls
 
                     anchors {
+                        rightMargin: 1
                         right: parent.right
-                        verticalCenter: parent.verticalCenter
+                        top: parent.top
+                        bottom: parent.bottom
                     }
 
-                    Metonym.MenuBar {
-                        id: __addressBarRightControlsMenuBar
+                    clip: true
 
-                        theme: root.theme
+                    Metonym.Button {
+                        showBackground: true
+                        radius: 0
 
-                        padding: 1
-                        roundCorners: false
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: parent.height - 2
 
-                        delegate: Metonym.MenuBarItem {
-                            backgroundColourDefault: 'transparent'
-                        }
+                        horizontalPadding: 0
+                        icon.source: root.theme.icons.view
+
+                        backgroundColor: window.theme === Metonym.Constants.CANONIC_THEME_DARK? root.theme.colourMain(0.4): root.theme.colourMain(0.9)
+                        backgroundHoveredColor: root.theme.col13
+                        backgroundPressedColor: root.theme.col15
+
+                        onClicked: viewMenu.visible? viewMenu.close() : viewMenu.open()
 
                         enabled: mainWindow.views.length > 0
 
                         Metonym.Menu {
-                            title: 'V'
+                            id: viewMenu
+                            title: 'qml view'
 
+                            y: parent.height + 5
                             x: parent.width - width
 
                             //iconSource: '/assets/icons/split-screen-vertical.svg'
                             showIndicator: false
+                            modal: true
+                            theme: Metonym.Styles.lightThemeLoader.item
 
                             Repeater {
                                 model: mainWindow.views.length

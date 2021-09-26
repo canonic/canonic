@@ -2,7 +2,11 @@
 #include <QDesktopServices>
 
 #include "../include/Window.hpp"
+#include "../include/DebugView.hpp"
+#include "../include/HTMLView.hpp"
+#include "../include/JSONView.hpp"
 #include "../include/QMLView.hpp"
+#include "../include/RawSourceView.hpp"
 
 #include <iostream>
 
@@ -192,96 +196,41 @@ namespace WebAPI {
         QJsonObject objectType;
         QJsonObject objectValue;
 
-
         if(reply->error())
         {
             std::cout << "reply has an error" << std::endl;
             std::cout << reply->errorString().toStdString() << std::endl;
-            /*
-            View *networkErrorView = new View{"Network Error View", QUrl{""}, QUrl{"qrc:/qml/NetworkErrorView.qml"}};
-            this->m_mainWindow->appendView(networkErrorView);
-            */
         }
         else {
-            /*
             // Debug view is always supported
-            View *debugView = new View{"Debug View", QUrl{""}, QUrl{"qrc:/qml/DebugView.qml"}};
-            this->m_mainWindow->appendView(debugView);
+            this->m_mainWindow->appendView(new DebugView{});
 
-            // Raw source view is always supported
-            View *rawSourceView = new View{"Raw Source View", QUrl{""}, QUrl{"qrc:/qml/RawSourceView.qml"}};
-            this->m_mainWindow->appendView(rawSourceView);
-            std::cout << "added raw source" << std::endl;
-
-            // Default to raw source view
+            this->m_mainWindow->appendView(new RawSourceView{});
             activeViewIndex = 1;
 
             QJsonParseError jsonError;
             QJsonDocument jsonDocument = QJsonDocument::fromJson( rawData, &jsonError );
             if( jsonError.error == QJsonParseError::NoError )
             {
-                View *jsonFileView = new View{"JSON File View", QUrl{""}, QUrl{"qrc:/qml/JSONFileView.qml"}};
-                this->m_mainWindow->appendView(jsonFileView);
-                activeViewIndex++;
-
-                if( jsonDocument.isObject() )
-                {
-                    QJsonObject jsonObj = jsonDocument.object();
-
-                    if(jsonObj.contains("type") && jsonObj.contains("value") && jsonObj.contains("views"))
-                    {
-                        QJsonValue jsonType = jsonObj.value("type");
-                        QJsonValue jsonValue = jsonObj.value("value");
-
-                        if(jsonValue.isObject())
-                        {
-                            objectValue = jsonValue.toObject();
-
-                            if(jsonType.isString())
-                            {
-                                QString type = jsonType.toString();
-                                if(type == "VARDECL_TYPE")
-                                {
-                                    View *varDeclListView = new View{"VarDecl List View", QUrl{""}, QUrl{"https://www.canonic.com/klata-ui/release/KlataUI/VarDeclListView.qml"}};
-                                    this->m_mainWindow->appendView(varDeclListView);
-                                    activeViewIndex++;
-                                }
-                                else if(type == "FUNCTIONDECL_TYPE")
-                                {
-                                    View *varDeclListView = new View{"FunctionDecl List View", QUrl{""}, QUrl{"https://www.canonic.com/klata-ui/release/KlataUI/FunctionDeclListView.qml"}};
-                                    this->m_mainWindow->appendView(varDeclListView);
-                                    activeViewIndex++;
-                                }
-                                else if(type == "KLATA_REPO")
-                                {
-                                    View *klatahRepoView = new View{"Klatah Repo View", QUrl{""}, QUrl{"https://www.canonic.com/klata-ui/release/KlataUI/KlatahRepoView.qml"}};
-                                    this->m_mainWindow->appendView(klatahRepoView);
-                                    activeViewIndex++;
-                                }
-                            }
-                        }
-                    }
-                }
+                this->m_mainWindow->appendView(new JSONView{});
+                activeViewIndex = 1;
             }
-            */
 
             QVariant contentType = reply->header(QNetworkRequest::ContentTypeHeader);
 
-            /*
             if (contentType.isValid() && contentType.toString().contains("text/html"))
             {
-                View *htmlDocumentView = new View{"HTML Document View", QUrl{""}, QUrl{"qrc:/qml/HTMLDocumentView.qml"}};
+                View *htmlDocumentView = new HTMLView{};
                 this->m_mainWindow->appendView(htmlDocumentView);
                 activeViewIndex++;
             }
-            */
 
             if(reply->url().path().endsWith(".qml", Qt::CaseInsensitive) ||
                 (contentType.isValid() && contentType.toString().contains("text/qml")))
             {
                 View *qmlDocumentView = new QMLView{};
                 this->m_mainWindow->appendView(qmlDocumentView);
-                //activeViewIndex++;
+                activeViewIndex++;
             }
         }
 
@@ -290,15 +239,6 @@ namespace WebAPI {
         this->m_document->setObjectValue(objectValue);
         this->m_mainWindow->setActiveViewIndex(activeViewIndex);
         this->m_mainWindow->updateGlobalHistory(this->m_location->getHref());
-
-        /*
-        QFile file("://qml/TLI.qml");
-        if (file.open(QIODevice::ReadOnly))
-        {
-            this->m_mainWindow->m_contentViewport->setData(file.readAll(), QUrl(QStringLiteral("qrc:/qml/TLI.qml")));
-            file.close();
-        }
-        */
 
         reply->deleteLater();
         std::cout << "Finished Request" << std::endl;

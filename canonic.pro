@@ -24,10 +24,13 @@ SOURCES += \
         lib/CanonicRenderer.cpp \
         lib/ContentViewport.cpp \
         lib/CxxSyntaxHighlighter.cpp \
+        lib/DebugView.cpp \
         lib/Document.cpp \
+        lib/HTMLView.cpp \
         lib/HistoryItem.cpp \
         lib/HostEventPropagator.cpp \
         lib/HostViewport.cpp \
+        lib/JSONView.cpp \
         lib/Location.cpp \
         lib/MainWindow.cpp \
         lib/Navigator.cpp \
@@ -35,6 +38,7 @@ SOURCES += \
         lib/NetworkAccessManagerFactory.cpp \
         lib/ProxyFactory.cpp \
         lib/QMLView.cpp \
+        lib/RawSourceView.cpp \
         lib/RenderControl.cpp \
         lib/URISyntaxHighlighter.cpp \
         lib/Viewport.cpp \
@@ -61,12 +65,15 @@ HEADERS += \
     include/ContentViewport.fwd.hpp \
     include/ContentViewport.hpp \
     include/CxxSyntaxHighlighter.hpp \
+    include/DebugView.hpp \
     include/Document.hpp \
+    include/HTMLView.hpp \
     include/HistoryItem.hpp \
     include/HostEventPropagator.fwd.hpp \
     include/HostEventPropagator.hpp \
     include/HostViewport.fwd.hpp \
     include/HostViewport.hpp \
+    include/JSONView.hpp \
     include/Location.hpp \
     include/MainWindow.fwd.hpp \
     include/MainWindow.hpp \
@@ -75,6 +82,7 @@ HEADERS += \
     include/NetworkAccessManagerFactory.hpp \
     include/ProxyFactory.hpp \
     include/QMLView.hpp \
+    include/RawSourceView.hpp \
     include/RenderControl.fwd.hpp \
     include/RenderControl.hpp \
     include/URISyntaxHighlighter.hpp \
