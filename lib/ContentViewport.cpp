@@ -6,6 +6,11 @@ ContentViewport::ContentViewport(MainWindow *mainWindow,
                                  RenderControl *renderControl):
     Viewport(mainWindow, renderControl)
 {
+    // Urls may not link to a document that specifies a background colour. In
+    // those cases we should display a white background to be consistent with
+    // current browsers and default qt qml behavior.
+    this->setColor(Qt::white);
+
     this->setObjectName("ContentViewport");
     //connect(this, &Viewport::initalised, this, &ContentViewport::reloadTLISource);
 }

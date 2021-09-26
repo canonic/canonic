@@ -8,6 +8,7 @@ HostViewport::HostViewport(MainWindow *mainWindow,
     Viewport(mainWindow, renderControl),
     m_forwardEvents{false}
 {
+    this->setColor(Qt::transparent);
     this->setObjectName("HostViewport");
 
     // Set host viewport specific context properties

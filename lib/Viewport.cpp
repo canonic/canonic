@@ -31,7 +31,6 @@ Viewport::Viewport(MainWindow *mainWindow, RenderControl* renderControl):
     this->m_qmlEngine->rootContext()->setContextProperty("window", m_mainWindow->m_window);
 
     this->setDefaultAlphaBuffer(true);
-    this->setColor(Qt::transparent);
 
     // Create connections
     connect(this, &QQuickWindow::sceneGraphInitialized, this, &Viewport::createTexture);
