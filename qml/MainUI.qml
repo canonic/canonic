@@ -390,6 +390,7 @@ Metonym.ThemedItem {
 
             Column {
                 anchors.centerIn: parent
+                width: parent.width > 600? parent.width * 0.8: parent.width
 
                 spacing: 8
 
@@ -397,6 +398,30 @@ Metonym.ThemedItem {
                     running: true
                     anchors.horizontalCenter: parent.horizontalCenter
                     visible: mainWindow.contentViewportStatus <= 2
+                }
+
+                Flickable {
+                    width: parent.width
+                    height: Math.min(contentHeight, parent.height)
+                    clip: true
+
+                    boundsBehavior: Flickable.StopAtBounds
+                    Metonym.ScrollBar.vertical: Metonym.ScrollBar {
+                        policy: parent.contentHeight > parent.height? Metonym.ScrollBar.AlwaysOn: Metonym.ScrollBar.AsNeeded
+                    }
+                    Metonym.ScrollBar.horizontal: Metonym.ScrollBar {
+                        policy: parent.contentWidth > parent.width? Metonym.ScrollBar.AlwaysOn: Metonym.ScrollBar.AsNeeded
+                    }
+
+                    Metonym.TextArea.flickable: Metonym.TextArea {
+                        readOnly: true
+                        color: root.theme.brand
+                        selectByMouse: true
+                        fontGroup: root.theme.font3
+                        text: "Error:\n" + mainWindow.contentViewportErrorString
+                    }
+
+                    visible: mainWindow.contentViewportStatus > 2
                 }
 
                 Metonym.Label {
@@ -409,14 +434,12 @@ Metonym.ThemedItem {
                         {
                             return 'Compiling component'
                         }
-                        else if (mainWindow.contentViewportStatus > 2)
-                        {
-                            return 'QML Error:\n' + mainWindow.contentViewportErrorString
-                        }
+                        return ''
                     }
                     fontGroup: root.theme.font3
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: root.theme.setColourAlpha(root.theme.brand, 0.8)
+                    visible: mainWindow.contentViewportStatus <= 2
                 }
             }
         }
