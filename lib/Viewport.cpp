@@ -250,7 +250,7 @@ void Viewport::handleComponentStatusChange()
         {
             errorString += error.url().toString();
             errorString += QString::number(error.line());
-            errorString += error.toString();
+            errorString += error.toString() + "\n";
         }
         this->setErrorString(errorString);
         this->setStatus(Viewport::Status::ComponentError);
@@ -281,7 +281,7 @@ void Viewport::handleIncubatorStatusChange(QQmlIncubator::Status status)
             {
                 errorString += error.url().toString();
                 errorString += QString::number(error.line());
-                errorString += error.toString();
+                errorString += error.toString() + "\n";
             }
             this->setErrorString(errorString);
             this->setStatus(Viewport::Status::ObjectCreationError);
