@@ -380,6 +380,8 @@ Metonym.ThemedItem {
         radius: 0
 
         Item {
+            id: statusContentContainer
+
             anchors {
                 topMargin: topBar.height
                 top: parent.top
@@ -388,6 +390,7 @@ Metonym.ThemedItem {
                 right: parent.right
             }
 
+            // Downloading / Compiling Indicator
             Column {
                 anchors.centerIn: parent
                 width: parent.width > 600? parent.width * 0.8: parent.width
@@ -397,32 +400,8 @@ Metonym.ThemedItem {
                 Metonym.BusyIndicator {
                     running: true
                     anchors.horizontalCenter: parent.horizontalCenter
-                    visible: mainWindow.contentViewportStatus <= 2
                 }
 
-                Flickable {
-                    width: parent.width
-                    height: Math.min(contentHeight, parent.height)
-                    clip: true
-
-                    boundsBehavior: Flickable.StopAtBounds
-                    Metonym.ScrollBar.vertical: Metonym.ScrollBar {
-                        policy: parent.contentHeight > parent.height? Metonym.ScrollBar.AlwaysOn: Metonym.ScrollBar.AsNeeded
-                    }
-                    Metonym.ScrollBar.horizontal: Metonym.ScrollBar {
-                        policy: parent.contentWidth > parent.width? Metonym.ScrollBar.AlwaysOn: Metonym.ScrollBar.AsNeeded
-                    }
-
-                    Metonym.TextArea.flickable: Metonym.TextArea {
-                        readOnly: true
-                        color: root.theme.brand
-                        selectByMouse: true
-                        fontGroup: root.theme.font3
-                        text: "Error:\n" + mainWindow.contentViewportErrorString
-                    }
-
-                    visible: mainWindow.contentViewportStatus > 2
-                }
 
                 Metonym.Label {
                     text: {
@@ -439,8 +418,64 @@ Metonym.ThemedItem {
                     fontGroup: root.theme.font3
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: root.theme.setColourAlpha(root.theme.brand, 0.8)
-                    visible: mainWindow.contentViewportStatus <= 2
                 }
+
+                visible: mainWindow.networkReplyError === 0 && mainWindow.contentViewportStatus <= 2
+            }
+
+            // Network Error Indicator
+            Column {
+                anchors.centerIn: parent
+                width: parent.width > 600? parent.width * 0.8: parent.width
+
+                spacing: 8
+
+                Metonym.Label {
+                    text: 'Network Error (code ' + mainWindow.networkReplyError + ')\n' + mainWindow.networkReplyErrorString
+                    fontGroup: root.theme.font3
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: root.theme.setColourAlpha(root.theme.brand, 0.8)
+                }
+
+                visible: mainWindow.networkReplyError > 0
+            }
+
+            Connections {
+                target: mainWindow
+                function onNetworkReplyErrorChanged(error) {console.log(error, mainWindow.networkReplyError)}
+            }
+
+            // Compiling Error Indicator
+            Column {
+                anchors.centerIn: parent
+                width: parent.width > 600? parent.width * 0.8: parent.width
+
+                spacing: 8
+
+                Flickable {
+                    width: parent.width
+                    height: Math.min(contentHeight, statusContentContainer.height)
+                    clip: true
+
+                    boundsBehavior: Flickable.StopAtBounds
+                    Metonym.ScrollBar.vertical: Metonym.ScrollBar {
+                        policy: parent.contentHeight > parent.height? Metonym.ScrollBar.AlwaysOn: Metonym.ScrollBar.AsNeeded
+                    }
+                    Metonym.ScrollBar.horizontal: Metonym.ScrollBar {
+                        policy: parent.contentWidth > parent.width? Metonym.ScrollBar.AlwaysOn: Metonym.ScrollBar.AsNeeded
+                    }
+
+                    Metonym.TextArea.flickable: Metonym.TextArea {
+                        id: compilingErrorTextArea
+                        readOnly: true
+                        color: root.theme.brand
+                        selectByMouse: true
+                        fontGroup: root.theme.font3
+                        text: "Error:\n" + mainWindow.contentViewportErrorString
+                    }
+                }
+
+                visible: mainWindow.networkReplyError === 0 && mainWindow.contentViewportStatus > 2
             }
         }
 

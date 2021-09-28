@@ -24,7 +24,8 @@
 
 MainWindow::MainWindow(): m_uploadProgress{0},
     m_downloadProgress{0},
-    m_mainUILoaded{false}
+    m_mainUILoaded{false},
+    m_networkReplyError{QNetworkReply::NetworkError::NoError}
 {
     this->resize(1600, 1000);
 
@@ -219,7 +220,7 @@ void MainWindow::handleHostViewportStatusChange(Viewport::Status status) {
 }
 
 void MainWindow::handleContentViewportStatusChange(Viewport::Status status) {
-    qDebug() << "handleContentViewportStatusChange";
+    qDebug() << "handleContentViewportStatusChange: " << int(status);
     emit this->contentViewportStatusChanged();
 
     if (status == Viewport::Status::Ready)
@@ -535,6 +536,29 @@ void MainWindow::setTheme(QString theme)
     this->m_theme = theme;
     emit this->themeChanged();
 }
+
+QNetworkReply::NetworkError MainWindow::getNetworkReplyError() const
+{
+    return this->m_networkReplyError;
+}
+
+void MainWindow::setNetworkReplyError(QNetworkReply::NetworkError error, QString errorString)
+{
+    this->m_networkReplyError = error;
+    emit this->networkReplyErrorChanged(error);
+
+    if (this->m_networkReplyErrorString != errorString)
+    {
+        this->m_networkReplyErrorString = errorString;
+        emit this->networkReplyErrorStringChanged(errorString);
+    }
+}
+
+QString MainWindow::getNetworkReplyErrorString() const
+{
+    return this->m_networkReplyErrorString;
+}
+
 
 qint64 MainWindow::getUploadProgress() const
 {

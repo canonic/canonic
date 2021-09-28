@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QNetworkReply>
 #include <QOpenGLContext>
 #include <QOffscreenSurface>
 #include <QQuickItem>
@@ -31,6 +32,8 @@ class MainWindow: public QWindow
     Q_PROPERTY(QUrl homePage READ getHomePageUrl WRITE setHomePageUrl NOTIFY homePageUrlChanged)
     Q_PROPERTY(QString build READ getBuild WRITE setBuild NOTIFY buildChanged)
     Q_PROPERTY(QString theme READ getTheme WRITE setTheme NOTIFY themeChanged)
+    Q_PROPERTY(QNetworkReply::NetworkError networkReplyError READ getNetworkReplyError NOTIFY networkReplyErrorChanged)
+    Q_PROPERTY(QString networkReplyErrorString READ getNetworkReplyErrorString NOTIFY networkReplyErrorStringChanged)
     Q_PROPERTY(qint64 uploadProgress READ getUploadProgress NOTIFY uploadProgressChanged)
     Q_PROPERTY(qint64 downloadProgress READ getDownloadProgress NOTIFY downloadProgressChanged)
     Q_PROPERTY(Viewport::Status contentViewportStatus READ getContentViewportStatus NOTIFY contentViewportStatusChanged)
@@ -44,6 +47,8 @@ class MainWindow: public QWindow
     void homePageUrlChanged();
     void buildChanged();
     void themeChanged();
+    void networkReplyErrorChanged(QNetworkReply::NetworkError error);
+    void networkReplyErrorStringChanged(QString errorString);
     void uploadProgressChanged(qint64 bytesSent, qint64 bytesTotal);
     void downloadProgressChanged(qint64 bytesReceived, qint64 bytesTotal);
     void contentViewportStatusChanged();
@@ -97,6 +102,10 @@ class MainWindow: public QWindow
 
     QString getTheme() const;
     void setTheme(QString theme);
+
+    QNetworkReply::NetworkError getNetworkReplyError() const;
+    void setNetworkReplyError(QNetworkReply::NetworkError error, QString errorString = "");
+    QString getNetworkReplyErrorString() const;
 
     qint64 getUploadProgress() const;
     void setUploadProgress(qint64 bytesSent, qint64 bytesTotal);
@@ -163,6 +172,8 @@ class MainWindow: public QWindow
   private:
     QRectF getNormalisedViewportGeometry() const;
     bool m_mainUILoaded;
+    QNetworkReply::NetworkError m_networkReplyError;
+    QString m_networkReplyErrorString;
 
   public slots:
     void updateGlobalHistory(QString href);

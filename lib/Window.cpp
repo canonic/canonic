@@ -160,6 +160,7 @@ namespace WebAPI {
         previousDoc->deleteLater();
 
         // reset upload and download progress
+        this->m_mainWindow->setNetworkReplyError(QNetworkReply::NetworkError::NoError);
         this->m_mainWindow->setUploadProgress(0, -1);
         this->m_mainWindow->setDownloadProgress(0, -1);
 
@@ -198,8 +199,7 @@ namespace WebAPI {
 
         if(reply->error())
         {
-            std::cout << "reply has an error" << std::endl;
-            std::cout << reply->errorString().toStdString() << std::endl;
+            this->m_mainWindow->setNetworkReplyError(reply->error(), reply->errorString());
         }
         else {
             // Debug view is always supported
