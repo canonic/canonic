@@ -31,6 +31,13 @@ void ContentViewport::updateItemSizes(QSize newSize)
         this->m_rootItem->setWidth(this->m_mainWindow->m_window->getInnerWidth());
         this->m_rootItem->setHeight(this->m_mainWindow->m_window->getInnerHeight());
     }
+    else if (this->m_rootWindow != nullptr)
+    {
+        this->m_rootWindow->setGeometry(this->m_mainWindow->m_window->getInnerScreenX(),
+                                        this->m_mainWindow->m_window->getInnerScreenY(),
+                                        this->m_mainWindow->m_window->getInnerWidth(),
+                                        this->m_mainWindow->m_window->getInnerHeight());
+    }
 }
 
 void ContentViewport::setTLISource(QUrl source)

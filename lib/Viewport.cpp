@@ -15,10 +15,13 @@ Viewport::Viewport(MainWindow *mainWindow, RenderControl* renderControl):
     m_qmlComponent{nullptr},
     m_qmlEngine{new QQmlEngine},
     m_renderControl{renderControl},
+    m_rootObject{nullptr},
     m_rootItem{nullptr},
+    m_rootWindow{nullptr},
     m_source{QUrl()},
     m_status{Viewport::Status::Null},
-    m_textureId{0}
+    m_textureId{0},
+    m_incubator{ViewportIncubator{mainWindow}}
 {
     // Set the incubation controller to the QQuickWindows incubation controller
     // if no incubation controller is already set.
@@ -45,7 +48,10 @@ Viewport::~Viewport()
     QOpenGLContext *context = this->m_mainWindow->m_context;
     context->makeCurrent(this->m_mainWindow->m_offscreenSurface);
 
-    delete this->m_rootItem;
+    if (this->m_rootObject)
+    {
+        this->m_rootObject->deleteLater();
+    }
 
     if (this->m_qmlComponent != nullptr)
     {
@@ -293,17 +299,27 @@ void Viewport::handleIncubatorStatusChange(QQmlIncubator::Status status)
         }
     }
 
-    QObject *rootObject = this->m_incubator.object();
-    this->m_rootItem = qobject_cast<QQuickItem *>(rootObject);
-    if (!this->m_rootItem) {
-        this->setErrorString("Not a QQuickItem");
-        delete rootObject;
-        this->setStatus(Viewport::Status::NotAnItemError);
-        return;
+    this->m_rootObject = this->m_incubator.object();
+
+    this->m_rootItem = qobject_cast<QQuickItem *>(this->m_rootObject);
+    if (this->m_rootItem) {
+        // The root item is ready. Associate it with the window.
+        this->m_rootItem->setParentItem(this->contentItem());
+        this->m_rootItem->setParent(this->contentItem());
+    }
+    else
+    {
+        // Test to see if the object is actually a window
+        this->m_rootWindow = qobject_cast<QQuickWindow *>(this->m_rootObject);
+        if (!this->m_rootWindow)
+        {
+            this->setErrorString("Not a QQuickItem or QQuickWindow");
+            delete this->m_rootObject;
+            this->setStatus(Viewport::Status::NotAnItemError);
+            return;
+        }
     }
 
-    // The root item is ready. Associate it with the window.
-    this->m_rootItem->setParentItem(this->contentItem());
     this->contentItem()->forceActiveFocus();
 
     // Update item and rendering related geometries.

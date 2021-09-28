@@ -440,11 +440,6 @@ Metonym.ThemedItem {
                 visible: mainWindow.networkReplyError > 0
             }
 
-            Connections {
-                target: mainWindow
-                function onNetworkReplyErrorChanged(error) {console.log(error, mainWindow.networkReplyError)}
-            }
-
             // Compiling Error Indicator
             Column {
                 anchors.centerIn: parent

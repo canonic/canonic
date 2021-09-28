@@ -1,5 +1,6 @@
 #include "../include/HostViewport.hpp"
 #include "../include/MainWindow.hpp"
+#include "../include/Window.hpp"
 
 #include <QQmlContext>
 
@@ -25,9 +26,14 @@ void HostViewport::updateItemSizes(QSize newSize)
     }
 
     // Set the root items items size
-    if (m_rootItem != nullptr){
+    if (this->m_rootItem != nullptr)
+    {
         this->m_rootItem->setWidth(newSize.width());
         this->m_rootItem->setHeight(newSize.height());
+    }
+    else if (this->m_rootWindow != nullptr)
+    {
+        this->m_rootWindow->setGeometry(0, 0, newSize.width(), newSize.height());
     }
 }
 

@@ -46,7 +46,9 @@ class Viewport: public QQuickWindow
     QQmlComponent *m_qmlComponent;
     QQmlEngine *m_qmlEngine;
     RenderControl *m_renderControl;
+    QObject *m_rootObject;
     QQuickItem *m_rootItem;
+    QQuickWindow *m_rootWindow;
 
     QUrl m_source;
     Viewport::Status m_status;
