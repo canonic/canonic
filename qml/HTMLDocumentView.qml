@@ -1,33 +1,44 @@
 import QtQuick 2.15
 import 'https://www.canonic.com/metonym/release/Metonym/' 0.1 as Metonym
 
-Metonym.ThemedItem {
-    id: root
-
-    Rectangle {
+Item {
+    Loader {
         anchors.fill: parent
-        color: root.theme.col16
-    }
+        active: Metonym.Styles.themesLoaded
 
-    Column {
-        anchors.centerIn: parent
+        sourceComponent: Component {
+            Metonym.ThemedItem {
+                id: root
 
-        spacing: 5
+                Rectangle {
+                    anchors.fill: parent
+                    color: root.theme.col16
+                }
 
-        Metonym.Label {
-            text: "Canonic does not support HTML (yet)"
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
+                Column {
+                    anchors.centerIn: parent
 
-        Metonym.Button {
-            label: 'Click to open with default browser'
-            bordered: true
+                    spacing: 5
 
-            onClicked: {
-                const windowFeatures = "external=yes";
-                window.open(window.location.href, "windowName", windowFeatures)
+                    Metonym.Label {
+                        text: "Canonic does not support HTML (yet)"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+
+                    Metonym.Button {
+                        label: 'Click to open with default browser'
+                        bordered: true
+
+                        onClicked: {
+                            const windowFeatures = "external=yes";
+                            window.open(window.location.href, "windowName", windowFeatures)
+                        }
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                }
             }
-            anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 }
+
+
