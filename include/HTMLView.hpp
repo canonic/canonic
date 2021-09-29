@@ -4,6 +4,8 @@
 
 class HTMLView : public View
 {
+    Q_OBJECT
+
   public:
     explicit HTMLView();
 

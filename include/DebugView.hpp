@@ -4,6 +4,8 @@
 
 class DebugView : public View
 {
+    Q_OBJECT
+
   public:
     explicit DebugView();
 

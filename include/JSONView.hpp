@@ -4,6 +4,8 @@
 
 class JSONView : public View
 {
+    Q_OBJECT
+
   public:
     explicit JSONView();
 

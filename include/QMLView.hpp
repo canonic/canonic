@@ -4,6 +4,8 @@
 
 class QMLView : public View
 {
+    Q_OBJECT
+
   public:
     explicit QMLView();
 

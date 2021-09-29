@@ -4,6 +4,8 @@
 
 class RawSourceView : public View
 {
+    Q_OBJECT
+
   public:
     explicit RawSourceView();
 

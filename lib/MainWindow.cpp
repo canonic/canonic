@@ -1,6 +1,7 @@
 #include "../include/MainWindow.hpp"
 #include "../include/Location.hpp"
 #include "../include/MainWindow.hpp"
+#include "../include/QMLView.hpp"
 #include "../include/View.hpp"
 #include "../include/Window.hpp"
 
@@ -645,8 +646,13 @@ void MainWindow::setActiveViewIndex(int activeViewIndex)
 
     if(activeViewIndex >= 0 && activeViewIndex < this->viewCount())
     {
-        this->m_contentViewport->setData(this->view(activeViewIndex)->process(this->m_window->getDocument()->getRawData()),
-                                         this->m_window->getLocation()->getHref());
+        View *view = this->view(activeViewIndex);
+
+        // Only set the base url for the QMLView. Otherwise some views fail to
+        // load in WASM.
+        QUrl url = qobject_cast<QMLView*>(view) ? this->m_window->getLocation()->getHref() : "";
+        this->m_contentViewport->setData(view->process(this->m_window->getDocument()->getRawData()),
+                                         url);
     }
 }
 
