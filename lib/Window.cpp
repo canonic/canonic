@@ -138,8 +138,6 @@ namespace WebAPI {
             this->m_networkReply = nullptr;
         }
 
-        std::cout << "handleLocationHrefChange: " << href.toStdString() << std::endl;
-        std::cout << "hardReload: " << hardReload << std::endl;
         QNetworkRequest request{QUrl{href}};
 
         this->m_mainWindow->resetContentViewport();
@@ -186,34 +184,32 @@ namespace WebAPI {
             this->m_networkReply = nullptr;
         }
 
-        std::cout << "got reply" << std::endl;
-
         // Clear the current views
-        std::cout << "clear views" << std::endl;
         this->m_mainWindow->clearViews();
-
-        const QByteArray& rawData = reply->readAll();
-        int activeViewIndex = 0;
-        QJsonObject objectType;
-        QJsonObject objectValue;
 
         if(reply->error())
         {
             this->m_mainWindow->setNetworkReplyError(reply->error(), reply->errorString());
         }
         else {
+            const QByteArray& rawData = reply->readAll();
+
+            int activeViewIndex = 0;
+            QJsonObject objectType;
+            QJsonObject objectValue;
+
             // Debug view is always supported
             this->m_mainWindow->appendView(new DebugView{});
 
             this->m_mainWindow->appendView(new RawSourceView{});
-            activeViewIndex = 1;
+            activeViewIndex++;
 
             QJsonParseError jsonError;
             QJsonDocument jsonDocument = QJsonDocument::fromJson( rawData, &jsonError );
             if( jsonError.error == QJsonParseError::NoError )
             {
                 this->m_mainWindow->appendView(new JSONView{});
-                activeViewIndex = 1;
+                activeViewIndex++;
             }
 
             QVariant contentType = reply->header(QNetworkRequest::ContentTypeHeader);
@@ -232,16 +228,15 @@ namespace WebAPI {
                 this->m_mainWindow->appendView(qmlDocumentView);
                 activeViewIndex++;
             }
+
+            this->m_document->setRawData(rawData);
+            this->m_document->setObjectType(objectType);
+            this->m_document->setObjectValue(objectValue);
+            this->m_mainWindow->setActiveViewIndex(activeViewIndex);
+            this->m_mainWindow->updateGlobalHistory(this->m_location->getHref());
         }
 
-        this->m_document->setRawData(rawData);
-        this->m_document->setObjectType(objectType);
-        this->m_document->setObjectValue(objectValue);
-        this->m_mainWindow->setActiveViewIndex(activeViewIndex);
-        this->m_mainWindow->updateGlobalHistory(this->m_location->getHref());
-
         reply->deleteLater();
-        std::cout << "Finished Request" << std::endl;
     }
 }
 
