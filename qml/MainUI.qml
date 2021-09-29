@@ -645,6 +645,60 @@ Metonym.ThemedItem {
                     }
 
                     Metonym.Label {
+                        text: 'Build Date:'
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: mainWindow.buildDate
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: 'Git Branch:'
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: mainWindow.gitBranch
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: 'Git Hash:'
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
+                        text: mainWindow.gitHash
+
+                        theme: __hiddenProps.lightTheme
+                        font {
+                            pointSize: 10
+                        }
+                    }
+
+                    Metonym.Label {
                         text: 'Patform:'
 
                         theme: __hiddenProps.lightTheme

@@ -526,6 +526,21 @@ void MainWindow::setBuild(QString build)
 #endif
 }
 
+const char *MainWindow::getBuildDate() const
+{
+    return __DATE__ " " __TIME__;
+}
+
+const char *MainWindow::getGitHash() const
+{
+    return GIT_HASH;
+}
+
+const char *MainWindow::getGitBranch() const
+{
+    return GIT_BRANCH;
+}
+
 QString MainWindow::getTheme() const
 {
     return this->m_theme;

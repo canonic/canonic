@@ -31,6 +31,9 @@ class MainWindow: public QWindow
     Q_PROPERTY(bool OS_WASM READ get_OS_WASM CONSTANT)
     Q_PROPERTY(QUrl homePage READ getHomePageUrl WRITE setHomePageUrl NOTIFY homePageUrlChanged)
     Q_PROPERTY(QString build READ getBuild WRITE setBuild NOTIFY buildChanged)
+    Q_PROPERTY(QString buildDate READ getBuildDate CONSTANT)
+    Q_PROPERTY(QString gitHash READ getGitHash CONSTANT)
+    Q_PROPERTY(QString gitBranch READ getGitBranch CONSTANT)
     Q_PROPERTY(QString theme READ getTheme WRITE setTheme NOTIFY themeChanged)
     Q_PROPERTY(QNetworkReply::NetworkError networkReplyError READ getNetworkReplyError NOTIFY networkReplyErrorChanged)
     Q_PROPERTY(QString networkReplyErrorString READ getNetworkReplyErrorString NOTIFY networkReplyErrorStringChanged)
@@ -96,6 +99,10 @@ class MainWindow: public QWindow
 
     QString getBuild() const;
     void setBuild(QString build);
+
+    const char *getBuildDate() const;
+    const char *getGitHash() const;
+    const char *getGitBranch() const;
 
     QQmlEngine* getQmlEngine() const;
     void resetContentViewport();

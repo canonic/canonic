@@ -19,6 +19,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+# Add Git info variables
+GIT_HASH="\\\"$$system(git -C \""$$_PRO_FILE_PWD_"\" rev-parse --short HEAD)\\\""
+GIT_BRANCH="\\\"$$system(git -C \""$$_PRO_FILE_PWD_"\" rev-parse --abbrev-ref HEAD)\\\""
+DEFINES += GIT_HASH=$$GIT_HASH
+DEFINES += GIT_BRANCH=$$GIT_BRANCH
+
 SOURCES += \
         lib/Auth.cpp \
         lib/CanonicRenderer.cpp \
