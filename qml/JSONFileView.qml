@@ -1,5 +1,5 @@
 import QtQuick 2.15
-import QtGraphicalEffects 1.15
+import Qt5Compat.GraphicalEffects
 import 'https://www.canonic.com/metonym/release/Metonym/' 0.1 as Metonym
 
 Item {
