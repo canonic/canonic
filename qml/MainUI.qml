@@ -329,29 +329,79 @@ Metonym.ThemedItem {
 
             onClicked: applicationsMenu.opened? applicationsMenu.close() : applicationsMenu.open()
 
-            Metonym.Menu {
+            Metonym.Popup {
                 id: applicationsMenu
 
-                theme: __hiddenProps.lightTheme
+                theme: Metonym.Styles.lightThemeLoader.item
 
                 y: parent.height + 10
                 x: parent.width - width
+
+                padding: 10
+                width: _applicationsMenuContent.implicitWidth + padding * 2
+                height: _applicationsMenuContent.implicitHeight + padding * 2
 
                 modal: true
                 closePolicy: Metonym.Popup.CloseOnEscape | Metonym.Popup.CloseOnPressOutsideParent
 
                 radius: 5
 
-                Metonym.MenuItem {
-                    text: "Settings"
-                    onTriggered: settingsPopup.visible? settingsPopup.close(): settingsPopup.open()
-                }
+                Column {
+                    id: _applicationsMenuContent
 
-                Metonym.MenuSeparator {}
+                    Metonym.Button {
+                        theme: Metonym.Styles.lightThemeLoader.item
 
-                Metonym.MenuItem {
-                    text: "About Canonic"
-                    onTriggered: aboutCanonicPopup.visible? aboutCanonicPopup.close(): aboutCanonicPopup.open()
+                        label: "Settings"
+                        width: parent.width
+                        pointSize: 9
+                        horizontalAlignment: Text.AlignRight
+                        icon.source: applicationsMenu.theme.icons.bars
+                        showBackground: true
+                        backgroundColor: theme.popup.backgroundColor
+
+                        LayoutMirroring.enabled: true
+                        LayoutMirroring.childrenInherit: true
+
+                        onClicked: {
+                            if (settingsPopup.visible){
+                                settingsPopup.close()
+                            }
+                            else {
+                                settingsPopup.open()
+                                this.focus = false
+                                settingsPopup.forceActiveFocus()
+                            }
+                        }
+                    }
+
+                    Metonym.MenuSeparator {}
+
+                    Metonym.Button {
+                        theme: Metonym.Styles.lightThemeLoader.item
+
+                        label: "About Canonic"
+                        width: parent.width
+                        pointSize: 9
+                        horizontalAlignment: Text.AlignRight
+                        icon.source: applicationsMenu.theme.icons.canonic
+                        showBackground: true
+                        backgroundColor: theme.popup.backgroundColor
+
+                        LayoutMirroring.enabled: true
+                        LayoutMirroring.childrenInherit: true
+
+                        onClicked: {
+                            if (aboutCanonicPopup.visible){
+                                aboutCanonicPopup.close()
+                            }
+                            else {
+                                aboutCanonicPopup.open()
+                                this.focus = false
+                                aboutCanonicPopup.forceActiveFocus()
+                            }
+                        }
+                    }
                 }
             }
         }

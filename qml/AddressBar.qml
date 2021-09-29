@@ -263,30 +263,52 @@ Metonym.ThemedItem {
 
                         enabled: mainWindow.views.length > 0
 
-                        Metonym.Menu {
+                        Metonym.Popup {
                             id: viewMenu
-                            title: 'qml view'
 
-                            y: parent.height + 5
-                            x: parent.width - width
-
-                            //iconSource: '/assets/icons/split-screen-vertical.svg'
-                            showIndicator: false
-                            modal: true
                             theme: Metonym.Styles.lightThemeLoader.item
 
-                            Repeater {
-                                model: mainWindow.views.length
-                                delegate: Metonym.MenuItem {
-                                    property var __app: mainWindow.views[model.index]
-                                    text: __app.displayName? __app.displayName : __app.source
+                            y: parent.height + 10
+                            x: parent.width - width
 
-                                    icon {
-                                       source: __app.iconSource? __app.iconSource: ''
-                                    }
+                            padding: 10
+                            width: _viewMenuContent.width + padding * 2
+                            height: _viewMenuContent.height + padding * 2
 
-                                    onTriggered: {
-                                        mainWindow.activeViewIndex = model.index
+                            modal: true
+                            closePolicy: Metonym.Popup.CloseOnEscape | Metonym.Popup.CloseOnPressOutsideParent
+
+                            radius: 5
+
+                            Column {
+                                id: _viewMenuContent
+
+                                width: 300
+
+                                spacing: 5
+
+                                Repeater {
+                                    id: _viewRepeater
+                                    width: parent.width
+                                    model: mainWindow.views.length
+                                    delegate: Metonym.Button {
+                                        property var __app: mainWindow.views[model.index]
+                                        label: __app.displayName? __app.displayName : __app.source
+
+                                        theme: Metonym.Styles.lightThemeLoader.item
+
+                                        width: parent.width
+                                        pointSize: 9
+                                        bold: false
+                                        horizontalAlignment: Text.AlignRight
+                                        icon.source: mainWindow.activeViewIndex === model.index ? theme.icons.circle : theme.icons.empty
+                                        showBackground: true
+                                        backgroundColor: theme.popup.backgroundColor
+
+                                        LayoutMirroring.enabled: true
+                                        LayoutMirroring.childrenInherit: true
+
+                                        onClicked: mainWindow.activeViewIndex = model.index
                                     }
                                 }
                             }

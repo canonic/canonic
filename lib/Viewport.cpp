@@ -106,7 +106,6 @@ void Viewport::setSource(QUrl source)
 
 void Viewport::setData(const QByteArray &data, QUrl source)
 {
-    qDebug() << data.length() << " | " << source;
     this->m_source = source;
 
     this->setStatus(Viewport::Status::Loading);
