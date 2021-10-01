@@ -186,7 +186,7 @@ void Viewport::resizeTexture(QSize newSize)
 
 void Viewport::updateSizes()
 {
-    QSize newSize = this->m_mainWindow->size() * this->m_mainWindow->devicePixelRatio();
+    QSize newSize = this->m_mainWindow->size();
 
     // Make sure the texture has a non zero size otherwise QQuickRenderTarget
     // will raise warnings
