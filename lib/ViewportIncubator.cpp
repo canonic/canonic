@@ -20,8 +20,9 @@ void ViewportIncubator::setInitialState(QObject *object)
     QQuickWindow *castWindow = qobject_cast<QQuickWindow *>(object);
     if (castWindow) {
         castWindow->setFlags(Qt::SubWindow);
-        castWindow->setParent(this->m_mainWindow);
-        castWindow->setTransientParent(this->m_mainWindow);
+        castWindow->setParent(this->m_mainWindow->m_contentViewport);
+        castWindow->setTransientParent(this->m_mainWindow->m_contentViewport);
+        castWindow->setColor(Qt::transparent);
+        castWindow->setDefaultAlphaBuffer(true);
     }
-    return;
 }

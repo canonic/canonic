@@ -317,6 +317,9 @@ void Viewport::handleIncubatorStatusChange(QQmlIncubator::Status status)
             this->setStatus(Viewport::Status::NotAnItemError);
             return;
         }
+
+        this->m_rootItem = this->m_rootWindow->contentItem();
+        this->m_rootItem->setParentItem(this->contentItem());
     }
 
     this->contentItem()->forceActiveFocus();
