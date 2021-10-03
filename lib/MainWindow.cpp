@@ -21,8 +21,6 @@
 #include <QQuickWindow>
 #include <QtQml>
 
-#include <iostream>
-
 MainWindow::MainWindow(): m_uploadProgress{0},
     m_downloadProgress{0},
     m_mainUILoaded{false},
@@ -113,8 +111,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::resetContentViewport()
 {
-    qDebug() << "resetContentViewport";
-
     // Set the existing content viewport's source to an empty url to stop
     // rendering
     ContentViewport *tmp = this->m_contentViewport;
@@ -203,7 +199,6 @@ void MainWindow::requestUpdate()
 }
 
 void MainWindow::handleHostViewportStatusChange(Viewport::Status status) {
-    qDebug() << "handleHostViewportStatusChange";
     if (status == Viewport::Status::Ready)
     {
         this->show();
@@ -215,13 +210,12 @@ void MainWindow::handleHostViewportStatusChange(Viewport::Status status) {
             this->m_window->getLocation()->setHref(initialUrl);
         }
         else {
-            this->m_window->getLocation()->setHref(this->getHomePageUrl());
+            this->m_window->getLocation()->setHref(this->getHomePageUrl().toString());
         }
     }
 }
 
 void MainWindow::handleContentViewportStatusChange(Viewport::Status status) {
-    qDebug() << "handleContentViewportStatusChange: " << int(status);
     emit this->contentViewportStatusChanged();
 
     if (status == Viewport::Status::Ready)
@@ -271,10 +265,8 @@ bool MainWindow::event(QEvent *event)
 
 void MainWindow::previousPage()
 {
-    std::cout << "previousPage" << this->m_historyIndex << std::endl;
     if(this->m_historyIndex > 0)
     {
-        std::cout << "chaning location" << std::endl;
         this->m_shouldIncrementHistoryIndex = false;
 
         this->m_historyIndex--;
@@ -286,10 +278,8 @@ void MainWindow::previousPage()
 
 void MainWindow::nextPage()
 {
-    std::cout << "nextPage" << this->m_historyIndex << std::endl;
     if(this->m_historyIndex < this->historyItemsCount() - 1)
     {
-        std::cout << "chaning location" << std::endl;
         this->m_shouldIncrementHistoryIndex = false;
 
         this->m_historyIndex++;
@@ -640,7 +630,6 @@ QQmlEngine* MainWindow::getQmlEngine() const
 
 void MainWindow::setActiveViewIndex(int activeViewIndex)
 {
-    std::cout << "setActiveViewIndex: " << activeViewIndex << std::endl;
     this->m_activeViewIndex = activeViewIndex;
     emit this->activeViewIndexChanged(activeViewIndex);
 
@@ -667,26 +656,22 @@ View *MainWindow::getActiveView() const
 
 void MainWindow::updateGlobalHistory(QString href)
 {
-    std::cout << "m_shouldIncrementHistoryIndex:" << this->m_shouldIncrementHistoryIndex << std::endl;
     if(this->m_shouldIncrementHistoryIndex){
 
         if(!this->m_history.isEmpty())
         {
             // Don't add to history if it's the same location
-            //if(this->m_history.last()->getLocation()->getHref() == href)
             if(this->historyItem(this->m_historyIndex)->getLocation()->getHref() == href)
             {
                 return;
             }
         }
 
-        std::cout << "incremneting history index:" << std::endl;
         this->m_historyIndex++;
 
         // Remove any forward pages
         while(this->m_history.count() > this->m_historyIndex)
         {
-            std::cout << "removing:" << this->historyItem(this->historyItemsCount() - 1)->getLocation()->getHref().toStdString() << "  " << this->historyItemsCount() << std::endl;
             this->removeLastHistoryItem();
         }
 
