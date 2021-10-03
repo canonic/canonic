@@ -7,10 +7,27 @@
             witch results in a scale of 1 and a 1:1 mapping between CSS pixels
             and Qt device independent pixels. -->
 
-        <title>Canonic | QML Web Browser</title>
+        <title>Canonic | Open Source QML Web Browser</title>
+        <meta name="description" content="The Canonic browser is a free and open-source web browser for QML content."/>
+
+        <meta property="og:title" content="Canonic | Open Source QML Web Browser"/>
+        <meta property="og:description" content="Canonic is a free and open-source web browser for QML content."/>
+        <meta property="og:url" content="https://www.canonic.com/"/>
+        <meta property="og:image" content="https://www.canonic.com/assets/images/canonic_open_graph_image__01_10_2021.png"/>
+        <meta property=og:type content=website/>
+        <meta property="og:locale" content="en_GB" />
+
+        <meta name="twitter:card" content="summary_large_image"></meta>
+
         <meta name="viewport" content="width=device-width, height=device-height, user-scalable=0" />
-        <meta name="description" content="Canonic is a free and open-source web browser for QML content."/>
-        <link rel="icon" href="/icon.svg" type="image/svg+xml">
+
+        <link rel="canonical" href="https://www.canonic.com/"/>
+        <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+
+        <meta name="keywords" content="canonic, qml, browser, search engine"/>
+        <meta name="google-site-verification" content="3wZsBNLqAAwSlKC_tDYevrCBfgXZSj0dtIH_eAuGaHI" />
+
         <style>
             /* Make the html body cover the entire (visual) viewport with no scroll bars. */
             html {
@@ -76,7 +93,7 @@
             <center style="line-height: 150%;">
                 <!--<img src="qtlogo.svg" width="320" height="200" style="display:block"></img>-->
                 <div>
-                    <div style="font-family: 'Garnet-Capitals-Bold'; font-size: 63px; text-transform: capitalize; margin-bottom: 27px;">CANONIC</div>
+                    <H1 style="font-family: 'Garnet-Capitals-Bold'; font-size: 63px; text-transform: capitalize; margin-bottom: 27px;">CANONIC</H1>
                     <div style="display: flex; justify-content: center; trasition: width 1s;">
                         <div style="color: #e9e9e9;" id="qtstatus">Loading WebAssembly Browser</div>
                         <div style="animation: spin 1.5s linear infinite; color: #15e888; margin-left: 12px;">🔾</div>
@@ -86,7 +103,18 @@
                 <noscript>JavaScript is disabled. Please enable JavaScript to use this application. </noscript>
             </center>
         </figure>
-        <canvas id="qtcanvas" oncontextmenu="event.preventDefault()" contenteditable="true"> </canvas>
+        <canvas id="qtcanvas" oncontextmenu="event.preventDefault()" contenteditable="true">
+        <h2>QML web browser</h2>
+        Canonic is an open-source web browser for QML content. It allows you to browse QML content (.qml) online within your native browser through a webassembly (WASM) web application.
+        <h2>What is QML?</h2>
+        QML (Qt Modeling Language) is a markup language designed for dynamic user interfaces. QML is designed to be used as a declarative language much CSS or HTML but allows for the use of inline Javascript to make imperative calls. For a high level comparison between HTML and QML think of HTML as a language designed for presenting decorated text documents where as QML is more suited to dynamic graphics content like games, user interfaces and 3d content. Traditionally QML is used in desktop or mobile applications however through webassembly it is now possible to run in a browser. Canonic enables you to browse qml web pages without having to go through the difficult process of compiling for webassembly. QML is also tightly integrated with c++, provides Qt’s well know signal and slots paradigm and the concept of property bindings.
+        <h2>What is Canonic? </h2>
+        The Canonic web browser is the first browser within a browser to enable the browsing of qml content. It is designed as an experimental test bed to explore what is required to bring QML to the web for programmers who prefer qml to html or who have little c++ experience.
+        <h2>Why use QML online?</h2>
+        QML is the perfect UI language for UI design. It natively accomplishes what is only possible through 3rd party libraries in HTML. If you are a Qt c++ programmer who already knows QML or a QML developer who would like to create a portfolio for your QML content canonic makes it easy for you to share your qml websites like any other.
+        <h2>What does Canonic mean?</h2>
+        Canonic gets it’s name from the use of Canonical links in web pages for search engines to determine original and authoritative content on the web. Canonical tags were introduced in 2009 for HTML as a way of identify “authoritative” or “canonical” content for search engines (Note that there is currently no analogue to canonical tags in QML). This prevents problems caused by duplicate content on a website or across the internet more generally. Canonicalization is a more general problem in computer science but in the context of urls and the web it can be though of as a process of converting data in to a single standard representation that can be compared more easily by people or machines. Search engines use these canonical urls as the single source of truth for content and generally rank canonical urls higher than urls with duplicate content.
+        </canvas>
         <script type="text/javascript">
             var spinner = document.querySelector("#qtspinner");
             var canvas = document.querySelector("#qtcanvas");
