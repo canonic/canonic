@@ -749,7 +749,7 @@ Metonym.ThemedItem {
                     }
 
                     Metonym.Label {
-                        text: 'Patform:'
+                        text: 'Platform:'
 
                         theme: __hiddenProps.lightTheme
                         font {
