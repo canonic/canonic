@@ -30,30 +30,6 @@ QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operat
         networkRequest.setUrl(this->m_mainWindow->getHomePageUrl());
     }
 
-    /*
-    if(url.startsWith("https://www.canonic.com/comparision/renderfarms"))
-    {
-        networkRequest.setUrl(QUrl(url.replace("https://www.canonic.com/comparision/renderfarms", "file:///S:/canonic/renderfarms")));
-    }
-
-    QString metonymUrl = "https://www.canonic.com/metonym/release/";
-    if(url.startsWith(metonymUrl))
-    {
-        networkRequest.setUrl(QUrl(url.replace(metonymUrl, "file:///S:/canonic/metonym/web/release/")));
-    }
-
-    QString klataUIUrl = "https://www.canonic.com/klata-ui/release/KlataUI/";
-    if(url.startsWith(klataUIUrl))
-    {
-        networkRequest.setUrl(QUrl(url.replace(klataUIUrl, "file:///S:/canonic/klata-ui/web/release/KlataUI/")));
-    }
-
-    if(url.startsWith("https://raw.githubusercontent.com/canonic/canonic-qml-web-directory/main"))
-    {
-        networkRequest.setUrl(QUrl(url.replace("https://raw.githubusercontent.com/canonic/canonic-qml-web-directory/main", "file:///S:/canonic/canonic-qml-web-directory")));
-    }
-    */
-
 #ifdef Q_OS_WASM
     if(networkRequest.url().scheme().contains("http"))
     {

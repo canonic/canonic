@@ -13,8 +13,5 @@
         <file>assets/icons/icon.svg</file>
         <file>qml/DebugView.qml</file>
         <file>qml/HTMLDocumentView.qml</file>
-        <file>qml/NetworkErrorView.qml</file>
-        <file>qml/TLI.qml</file>
-        <file>qml/ScrollTester.qml</file>
     </qresource>
 </RCC>

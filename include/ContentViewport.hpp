@@ -15,6 +15,4 @@ class ContentViewport: public Viewport
                              RenderControl *renderControl);
 
     void updateItemSizes(QSize newSize) override;
-    void setTLISource(QUrl source);
-    void reloadTLISource();
 };
