@@ -205,7 +205,7 @@ Metonym.ThemedItem {
             icon.source: root.theme.icons.home
             showBackground: true
 
-            onClicked: window.location.href = ''
+            onClicked: window.location.href = mainWindow.homePage
         }
 
         AddressBar {
