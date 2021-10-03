@@ -372,6 +372,7 @@ Metonym.ThemedItem {
                                 this.focus = false
                                 settingsPopup.forceActiveFocus()
                             }
+                            applicationsMenu.close()
                         }
                     }
 
@@ -400,6 +401,7 @@ Metonym.ThemedItem {
                                 this.focus = false
                                 aboutCanonicPopup.forceActiveFocus()
                             }
+                            applicationsMenu.close()
                         }
                     }
                 }
