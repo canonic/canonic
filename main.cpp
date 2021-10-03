@@ -1,28 +1,4 @@
-/*
-#include <QSurfaceFormat>
-#include <QSslConfiguration>
-#include <QSslSocket>
-#include <QWidget>
-#include <QVBoxLayout>
-*/
-
 #include <QtGlobal>
-
-// Use to test QQuick mode
-//#ifdef Q_OS_WASM
-//    #undef Q_OS_WASM
-//#endif
-//#define Q_OS_WASM
-
-/*
-#ifdef Q_OS_WASM
-    #include <QApplication>
-    #include "include/QQuickMainWindow.hpp"
-#else
-    #include <QApplication>
-    #include "include/QWidgetMainWindow.hpp"
-#endif
-*/
 
 #include <QGuiApplication>
 #include <QtQuick3D/qquick3d.h>
@@ -31,10 +7,6 @@
 
 #include "include/MainWindow.hpp"
 #include "include/Window.hpp"
-
-// Include charts so that it is installed for webassembly
-// #include <QtCharts>
-
 
 int main(int argc, char *argv[])
 {
@@ -62,16 +34,6 @@ int main(int argc, char *argv[])
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGLRhi);
 
     MainWindow mainWin;
-    /*
-    // Set the initial url if provided
-    QString initialUrl = QString(qgetenv("CANONIC_INITIAL_URL"));
-    if(initialUrl.length())
-    {
-        mainWin.m_window->getLocation()->setHref(initialUrl);
-    }
-    else {
-        mainWin.m_window->getLocation()->setHref("");
-    }*/
 
     return app.exec();
 }

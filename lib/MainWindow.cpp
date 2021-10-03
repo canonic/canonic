@@ -215,7 +215,7 @@ void MainWindow::handleHostViewportStatusChange(Viewport::Status status) {
             this->m_window->getLocation()->setHref(initialUrl);
         }
         else {
-            this->m_window->getLocation()->setHref("");
+            this->m_window->getLocation()->setHref(this->getHomePageUrl());
         }
     }
 }

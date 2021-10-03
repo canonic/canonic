@@ -25,9 +25,18 @@ QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operat
             this->m_mainWindow->getAuth()->getProofOfIdentityType().toLatin1());
     }
 
+    // Send empty urls to the browsers homepage
     if(url.length() == 0)
     {
         networkRequest.setUrl(this->m_mainWindow->getHomePageUrl());
+        url = networkRequest.url().toString();
+    }
+
+    // Send www.canonic.com to the QML home page
+    if(url == "https://www.canonic.com/")
+    {
+        networkRequest.setUrl(QUrl("https://www.canonic.com/main.qml"));
+        url = networkRequest.url().toString();
     }
 
 #ifdef Q_OS_WASM
