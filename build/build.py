@@ -1,4 +1,15 @@
 #!/usr/bin/python3.8
+
+"""
+Usage:
+
+Build and deploy a production release.
+./build
+
+Build a production release without deploying files to AWS.
+./build -no-deploy
+"""
+
 import logging
 import os
 import pathlib
@@ -7,6 +18,8 @@ import subprocess
 import sys
 import time
 import typing
+
+NO_DEPLOY = '--no-deploy'
 
 DEBUG_BUILD  = False
 RELEASE_SUFFIX = 'release'
@@ -100,41 +113,42 @@ else:
 
 result = subprocess.run(['make', BUILD_SUFFIX])
 
-os.chdir(OUTPUT_DIR)
+if NO_DEPLOY not in sys.argv:
+    os.chdir(OUTPUT_DIR)
 
-wasm_file_name = 'canonic.{}.wasm'.format(BUILD_SUFFIX)
-print("Compressing canonic.wasm via brotli to {}".format(wasm_file_name))
-result = subprocess.run(['brotli', 'canonic.wasm', '-o', wasm_file_name])
+    wasm_file_name = 'canonic.{}.wasm'.format(BUILD_SUFFIX)
+    print("Compressing canonic.wasm via brotli to {}".format(wasm_file_name))
+    result = subprocess.run(['brotli', 'canonic.wasm', '-o', wasm_file_name])
 
-js_file_name = 'canonic.{}.js'.format(BUILD_SUFFIX)
-print("copying canonic.js to " + js_file_name)
-shutil.copy(OUTPUT_DIR / 'canonic.js', OUTPUT_DIR / js_file_name)
+    js_file_name = 'canonic.{}.js'.format(BUILD_SUFFIX)
+    print("copying canonic.js to " + js_file_name)
+    shutil.copy(OUTPUT_DIR / 'canonic.js', OUTPUT_DIR / js_file_name)
 
-os.chdir(OUTPUT_DIR)
+    os.chdir(OUTPUT_DIR)
 
-print("Starting file uploads")
-upload_file('qtloader.js', AWS_BUCKET_NAME, extra_args={
-        'ACL': 'public-read',
-        'ContentType': 'application/javascript',
-    })
+    print("Starting file uploads")
+    upload_file('qtloader.js', AWS_BUCKET_NAME, extra_args={
+            'ACL': 'public-read',
+            'ContentType': 'application/javascript',
+        })
 
-upload_file(js_file_name, AWS_BUCKET_NAME, extra_args={
-        'ACL': 'public-read',
-        'ContentType': 'application/javascript',
-    })
+    upload_file(js_file_name, AWS_BUCKET_NAME, extra_args={
+            'ACL': 'public-read',
+            'ContentType': 'application/javascript',
+        })
 
-upload_file(wasm_file_name, AWS_BUCKET_NAME, extra_args={
-        'ACL': 'public-read',
-        'ContentEncoding': 'br',
-        'ContentType': 'application/wasm',
-        'Metadata': {
-            'decompressedcontentlength': str(pathlib.Path('canonic.wasm').stat().st_size)
-        }
-    })
+    upload_file(wasm_file_name, AWS_BUCKET_NAME, extra_args={
+            'ACL': 'public-read',
+            'ContentEncoding': 'br',
+            'ContentType': 'application/wasm',
+            'Metadata': {
+                'decompressedcontentlength': str(pathlib.Path('canonic.wasm').stat().st_size)
+            }
+        })
 
-print("Invalidating cloudfront content")
-invalidation_id = create_invalidation(['/{}'.format(wasm_file_name),
-                                       '/{}'.format(js_file_name),
-                                       '/qtloader.js'], AWS_CF_DISTRIBUTION_ID)
+    print("Invalidating cloudfront content")
+    invalidation_id = create_invalidation(['/{}'.format(wasm_file_name),
+                                           '/{}'.format(js_file_name),
+                                           '/qtloader.js'], AWS_CF_DISTRIBUTION_ID)
 
-print("invalidation_id:", invalidation_id)
+    print("invalidation_id:", invalidation_id)
