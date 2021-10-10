@@ -37,6 +37,8 @@ PROJECT_PATH = pathlib.Path(__file__).absolute().parent.parent / 'canonic.pro'
 AWS_BUCKET_NAME = 'www.canonic.com'
 AWS_CF_DISTRIBUTION_ID = 'E783CEX3P81S7'
 
+SITEMAP_FILE_NAME = 'sitemap.xml'
+
 if 'EMSDK' not in os.environ:
     os.chdir(EMSCRIPTEN_DIR)
 
@@ -95,6 +97,11 @@ def create_invalidation(invalidations: typing.List[str], distribution_id: str):
     return invalidation_id
 
 
+def TimestampISO8601(t):
+  """Seconds since epoch (1970-01-01) --> ISO 8601 time string."""
+  return time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(t))
+
+
 if BUILD_DIR.exists():
     print("Cleaning '{}'".format(BUILD_DIR))
     shutil.rmtree(BUILD_DIR)
@@ -116,6 +123,18 @@ result = subprocess.run(['make', BUILD_SUFFIX])
 if NO_DEPLOY not in sys.argv:
     os.chdir(OUTPUT_DIR)
 
+    # Generate sitemap.xml file
+    with open(SITEMAP_FILE_NAME, 'w') as f:
+        f.write(f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://www.canonic.com/</loc>
+        <lastmod>{TimestampISO8601(time.time())}</lastmod>
+        <priority>1.0</priority>
+    </url>
+</urlset>
+""")
+
     wasm_file_name = 'canonic.{}.wasm'.format(BUILD_SUFFIX)
     print("Compressing canonic.wasm via brotli to {}".format(wasm_file_name))
     result = subprocess.run(['brotli', 'canonic.wasm', '-o', wasm_file_name])
@@ -127,6 +146,12 @@ if NO_DEPLOY not in sys.argv:
     os.chdir(OUTPUT_DIR)
 
     print("Starting file uploads")
+
+    upload_file(SITEMAP_FILE_NAME, AWS_BUCKET_NAME, extra_args={
+            'ACL': 'public-read',
+            'ContentType': 'text/xml',
+        })
+
     upload_file('qtloader.js', AWS_BUCKET_NAME, extra_args={
             'ACL': 'public-read',
             'ContentType': 'application/javascript',
@@ -147,7 +172,8 @@ if NO_DEPLOY not in sys.argv:
         })
 
     print("Invalidating cloudfront content")
-    invalidation_id = create_invalidation(['/{}'.format(wasm_file_name),
+    invalidation_id = create_invalidation(['/{}'.format(SITEMAP_FILE_NAME),
+                                           '/{}'.format(wasm_file_name),
                                            '/{}'.format(js_file_name),
                                            '/qtloader.js'], AWS_CF_DISTRIBUTION_ID)
 
