@@ -70,8 +70,8 @@ MainWindow::MainWindow(): m_uploadProgress{0},
     qmlRegisterUncreatableType<HistoryItem>("com.mycompany.qmlcomponents", 1, 0, "HistoryItem", "Can not create HistoryItem");
     qmlRegisterType<View>("com.mycompany.qmlcomponents", 1, 0, "View");
     qmlRegisterType<HostEventPropagator>("com.mycompany.qmlcomponents", 1, 0, "HostEventPropagator");
-    qmlRegisterType< CxxSyntaxHighlighter >( "Meta", 1, 0, "CxxSyntaxHighlighter" );
-    qmlRegisterType< URISyntaxHighlighter >( "Meta", 1, 0, "URISyntaxHighlighter" );
+    qmlRegisterType< CxxSyntaxHighlighter >( "Canonic", 1, 0, "CxxSyntaxHighlighter" );
+    qmlRegisterType< URISyntaxHighlighter >( "Canonic", 1, 0, "URISyntaxHighlighter" );
 
     // When Quick says there is a need to render, we will not render immediately. Instead,
     // a timer with a small interval is used to get better performance.

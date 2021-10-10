@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.12
 import Qt5Compat.GraphicalEffects as QtGraphicalEffects
-import Meta 1.0
+import Canonic 1.0 as Canonic
 import 'https://www.canonic.com/metonym/release/Metonym/' 0.1 as Metonym
 import com.mycompany.qmlcomponents 1.0
 
@@ -221,7 +221,7 @@ Metonym.ThemedItem {
                         event.accepted = true;
                     }
 
-                    URISyntaxHighlighter {
+                    Canonic.URISyntaxHighlighter {
                         id: syntaxHighlighter
                         textDocument: addressBarTextField.textDocument
 
