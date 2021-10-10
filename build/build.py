@@ -32,7 +32,11 @@ BUILD_DIR = pathlib.Path('/mnt/s/canonic/build-canonic-wasm-debug' if DEBUG_BUIL
 OUTPUT_DIR = BUILD_DIR / BUILD_SUFFIX
 CANONIC_DIR = pathlib.Path('/mnt/s/canonic')
 QMAKE_PATH = pathlib.Path('/mnt/s/qt/build/qtbase/bin/qmake')
-PROJECT_PATH = pathlib.Path(__file__).absolute().parent.parent / 'canonic.pro'
+CANONIC_SRC_DIR = pathlib.Path(__file__).absolute().parent.parent
+PROJECT_PATH = CANONIC_SRC_DIR / 'canonic.pro'
+
+INDEX_HTML_FILE_NAME = 'index.html'
+QT_LOADER_JS_FILE_NAME = 'qtloader.js'
 
 AWS_BUCKET_NAME = 'www.canonic.com'
 AWS_CF_DISTRIBUTION_ID = 'E783CEX3P81S7'
@@ -119,6 +123,20 @@ else:
     assert False
 
 result = subprocess.run(['make', BUILD_SUFFIX])
+
+# Copy index.html to the build directory
+index_html_build_path = pathlib.Path(OUTPUT_DIR / INDEX_HTML_FILE_NAME)
+index_html_build_path.unlink(missing_ok=True)
+index_html_src_path = pathlib.Path(CANONIC_SRC_DIR / INDEX_HTML_FILE_NAME)
+print("Copying '{}' to '{}'".format(index_html_src_path.as_posix(), index_html_build_path.as_posix()))
+shutil.copy(index_html_src_path, index_html_build_path)
+
+# Copy modified qtloader.js to build directory
+qt_loader_js_build_path = pathlib.Path(OUTPUT_DIR / QT_LOADER_JS_FILE_NAME)
+qt_loader_js_build_path.unlink(missing_ok=True)
+qt_loader_js_src_path = pathlib.Path(CANONIC_SRC_DIR / QT_LOADER_JS_FILE_NAME)
+print("Copying '{}' to '{}'".format(qt_loader_js_src_path.as_posix(), qt_loader_js_build_path.as_posix()))
+shutil.copy(qt_loader_js_src_path, qt_loader_js_build_path)
 
 if NO_DEPLOY not in sys.argv:
     os.chdir(OUTPUT_DIR)
