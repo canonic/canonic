@@ -40,10 +40,13 @@ QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operat
     }
 
 #ifdef Q_OS_WASM
+    // Proxy http and https requests to avoid CORS issues
     if(networkRequest.url().scheme().contains("http"))
     {
-        networkRequest.setUrl(QUrl("https://proxy.canonic.com/proxy/" + networkRequest.url().toString()));
-        networkRequest.setRawHeader(QByteArray("x-requested-with"), "canonic");
+        if(!url.startsWith("https://www.canonic.com")) {
+            networkRequest.setUrl(QUrl("https://proxy.canonic.com/proxy/" + networkRequest.url().toString()));
+            networkRequest.setRawHeader(QByteArray("x-requested-with"), "canonic");
+        }
     }
 #endif
 
