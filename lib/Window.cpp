@@ -8,8 +8,41 @@
 #include "../include/QMLView.hpp"
 #include "../include/RawSourceView.hpp"
 
-#include <iostream>
+#ifdef Q_OS_WASM
+#include <emscripten.h>
 
+EM_JS(void, pushHistoryState, (const char *url, int urlLength), {
+    var origin = window.location.origin + '/';
+    var canonicUrl = UTF8ToString(url, urlLength);
+    var newUrl;
+    var title;
+
+    // Cache the original page title
+    if (window.__original_title === undefined)
+    {
+        window.__original_title = document.title
+    }
+
+    // The home page is a special case where we do not want to append a fragment
+    // or modify the title
+    if (origin === canonicUrl)
+    {
+        newUrl = origin;
+        title = window.__original_title;
+    }
+    else
+    {
+        newUrl = origin + '#' + canonicUrl;
+        title = 'Canonic (' + canonicUrl + ')';
+    }
+
+    if (newUrl !== window.location.href)
+    {
+        window.history.pushState({}, title, newUrl);
+        document.title = title;
+    }
+});
+#endif
 
 namespace WebAPI {
     Window::Window(MainWindow *mainWindow, QObject *parent)
@@ -234,6 +267,11 @@ namespace WebAPI {
             this->m_document->setObjectValue(objectValue);
             this->m_mainWindow->setActiveViewIndex(activeViewIndex);
             this->m_mainWindow->updateGlobalHistory(this->m_location->getHref());
+
+#ifdef Q_OS_WASM
+            std::string urlString = this->m_location->getHref().toStdString();
+            pushHistoryState(urlString.c_str(), urlString.length());
+#endif
         }
 
         reply->deleteLater();
