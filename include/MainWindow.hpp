@@ -159,7 +159,7 @@ class MainWindow: public QWindow
     bool m_shouldIncrementHistoryIndex{true};
     short m_historyIndex{-1};
     QVector<HistoryItem *> m_history;
-    QUrl m_homePageUrl{"https://www.canonic.com/"};
+    QUrl m_homePageUrl{CANONIC_HOME_PAGE};
     QString m_theme;
     qint64 m_uploadProgress;
     qint64 m_downloadProgress;

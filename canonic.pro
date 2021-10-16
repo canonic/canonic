@@ -25,6 +25,8 @@ GIT_BRANCH="\\\"$$system(git -C \""$$_PRO_FILE_PWD_"\" rev-parse --abbrev-ref HE
 DEFINES += GIT_HASH=$$GIT_HASH
 DEFINES += GIT_BRANCH=$$GIT_BRANCH
 
+DEFINES += "CANONIC_HOME_PAGE=\"\\\"https://www.canonic.com/\\\"\""
+
 SOURCES += \
         lib/Auth.cpp \
         lib/CanonicRenderer.cpp \
