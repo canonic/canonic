@@ -48,21 +48,26 @@ Viewport::~Viewport()
     QOpenGLContext *context = this->m_mainWindow->m_context;
     context->makeCurrent(this->m_mainWindow->m_offscreenSurface);
 
-    if (this->m_rootObject)
-    {
-        this->m_rootObject->deleteLater();
-    }
-
-    if (this->m_qmlComponent != nullptr)
-    {
-        delete this->m_qmlComponent;
-    }
+    this->cleanupRootObjectAndComponent();
 
     if (this->m_textureId)
     {
         this->destroyTexture();
     }
     context->doneCurrent();
+}
+
+void Viewport::cleanupRootObjectAndComponent()
+{
+    if (this->m_rootObject != nullptr)
+    {
+        this->m_rootObject->deleteLater();
+    }
+
+    if (this->m_qmlComponent != nullptr)
+    {
+        this->m_qmlComponent->deleteLater();
+    }
 }
 
 QQmlEngine* Viewport::getQmlEngine() const
@@ -106,6 +111,8 @@ void Viewport::setSource(QUrl source)
 
 void Viewport::setData(const QByteArray &data, QUrl source)
 {
+    this->cleanupRootObjectAndComponent();
+
     this->m_source = source;
 
     this->setStatus(Viewport::Status::Loading);

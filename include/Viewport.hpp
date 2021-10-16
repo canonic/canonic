@@ -56,6 +56,7 @@ class Viewport: public QQuickWindow
     void setStatus(Viewport::Status status);
     virtual void updateItemSizes(QSize newSize) = 0;
     void setErrorString(QString errorString);
+    void cleanupRootObjectAndComponent();
 
   private:
     uint m_textureId;
