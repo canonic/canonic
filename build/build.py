@@ -42,6 +42,10 @@ AWS_BUCKET_NAME = 'www.canonic.com'
 AWS_CF_DISTRIBUTION_ID = 'E783CEX3P81S7'
 
 SITEMAP_FILE_NAME = 'sitemap.xml'
+WASM_BUILD_NAME = 'canonic.wasm'
+JS_BUILD_NAME = 'canonic.js'
+DEV_HTTPS_KEY_FILE = CANONIC_SRC_DIR / 'build/key.qml'
+DEV_HTTPS_CERT_FILE = CANONIC_SRC_DIR / 'build/cert.qml'
 
 if 'EMSDK' not in os.environ:
     os.chdir(EMSCRIPTEN_DIR)
@@ -138,12 +142,13 @@ qt_loader_js_src_path = pathlib.Path(CANONIC_SRC_DIR / QT_LOADER_JS_FILE_NAME)
 print("Copying '{}' to '{}'".format(qt_loader_js_src_path.as_posix(), qt_loader_js_build_path.as_posix()))
 shutil.copy(qt_loader_js_src_path, qt_loader_js_build_path)
 
-if NO_DEPLOY not in sys.argv:
-    os.chdir(OUTPUT_DIR)
+os.chdir(OUTPUT_DIR)
 
-    # Generate sitemap.xml file
-    with open(SITEMAP_FILE_NAME, 'w') as f:
-        f.write(f"""<?xml version="1.0" encoding="UTF-8"?>
+wasm_file_name = 'canonic.{}.wasm'.format(BUILD_SUFFIX)
+
+# Generate sitemap.xml file
+with open(SITEMAP_FILE_NAME, 'w') as f:
+    f.write(f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://www.canonic.com/</loc>
@@ -153,14 +158,19 @@ if NO_DEPLOY not in sys.argv:
 </urlset>
 """)
 
-    wasm_file_name = 'canonic.{}.wasm'.format(BUILD_SUFFIX)
+if NO_DEPLOY in sys.argv:
+    print("renaming '{}' to '{}'".format(WASM_BUILD_NAME, wasm_file_name))
+    pathlib.Path(WASM_BUILD_NAME).rename(wasm_file_name)
+else:
     print("Compressing canonic.wasm via brotli to {}".format(wasm_file_name))
-    result = subprocess.run(['brotli', 'canonic.wasm', '-o', wasm_file_name])
+    result = subprocess.run(['brotli', WASM_BUILD_NAME, '-o', wasm_file_name])
 
-    js_file_name = 'canonic.{}.js'.format(BUILD_SUFFIX)
-    print("copying canonic.js to " + js_file_name)
-    shutil.copy(OUTPUT_DIR / 'canonic.js', OUTPUT_DIR / js_file_name)
+js_file_name = 'canonic.{}.js'.format(BUILD_SUFFIX)
+print("copying '{}' to '{}'".format(JS_BUILD_NAME, js_file_name))
+shutil.copy(OUTPUT_DIR / JS_BUILD_NAME, OUTPUT_DIR / js_file_name)
 
+
+if NO_DEPLOY not in sys.argv:
     os.chdir(OUTPUT_DIR)
 
     print("Starting file uploads")
