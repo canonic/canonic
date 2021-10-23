@@ -7,6 +7,7 @@
 
 #include "../include/CxxSyntaxHighlighter.hpp"
 #include "../include/HostEventPropagator.hpp"
+#include "../include/QMLSyntaxHighlighter.hpp"
 #include "../include/URISyntaxHighlighter.hpp"
 
 #ifdef Q_OS_WASM
@@ -71,6 +72,7 @@ MainWindow::MainWindow(): m_uploadProgress{0},
     qmlRegisterType<View>("com.mycompany.qmlcomponents", 1, 0, "View");
     qmlRegisterType<HostEventPropagator>("com.mycompany.qmlcomponents", 1, 0, "HostEventPropagator");
     qmlRegisterType< CxxSyntaxHighlighter >( "Canonic", 1, 0, "CxxSyntaxHighlighter" );
+    qmlRegisterType< QMLSyntaxHighlighter >( "Canonic", 1, 0, "QMLSyntaxHighlighter" );
     qmlRegisterType< URISyntaxHighlighter >( "Canonic", 1, 0, "URISyntaxHighlighter" );
 
     // When Quick says there is a need to render, we will not render immediately. Instead,

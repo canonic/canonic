@@ -45,6 +45,7 @@ SOURCES += \
         lib/NetworkAccessManager.cpp \
         lib/NetworkAccessManagerFactory.cpp \
         lib/ProxyFactory.cpp \
+        lib/QMLSyntaxHighlighter.cpp \
         lib/QMLView.cpp \
         lib/RawSourceView.cpp \
         lib/RenderControl.cpp \
@@ -90,6 +91,7 @@ HEADERS += \
     include/NetworkAccessManager.hpp \
     include/NetworkAccessManagerFactory.hpp \
     include/ProxyFactory.hpp \
+    include/QMLSyntaxHighlighter.hpp \
     include/QMLView.hpp \
     include/RawSourceView.hpp \
     include/RenderControl.fwd.hpp \
