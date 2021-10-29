@@ -39,6 +39,14 @@ QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operat
         url = networkRequest.url().toString();
     }
 
+    // So that http servers have a way to differentiate HTML focused browsers vs
+    // QML focused browsers set 'text/qml' as the primary accepted content type.
+    QByteArray originalAcceptHeader = originalReq.rawHeader("Accept");
+    if (originalAcceptHeader == "" or originalAcceptHeader == "*/*")
+    {
+        networkRequest.setRawHeader("Accept", "text/qml;q=1.0, */*;q=0.9");
+    }
+
 #ifdef Q_OS_WASM
     // Proxy http and https requests to avoid CORS issues
     if(networkRequest.url().scheme().contains("http"))
