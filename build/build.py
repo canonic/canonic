@@ -10,6 +10,7 @@ Build a production release without deploying files to AWS.
 ./build -no-deploy
 """
 
+import hashlib
 import logging
 import os
 import pathlib
@@ -144,7 +145,9 @@ shutil.copy(qt_loader_js_src_path, qt_loader_js_build_path)
 
 os.chdir(OUTPUT_DIR)
 
-wasm_file_name = 'canonic.{}.wasm'.format(BUILD_SUFFIX)
+# Calculate the md5 hash of the wasm  file
+wasm_file_md5 = hashlib.md5(open(OUTPUT_DIR / WASM_BUILD_NAME,'rb').read()).hexdigest()
+wasm_file_name = 'canonic.{}.{}.wasm'.format(BUILD_SUFFIX, wasm_file_md5)
 
 # Generate sitemap.xml file
 with open(SITEMAP_FILE_NAME, 'w') as f:
@@ -165,7 +168,11 @@ else:
     print("Compressing canonic.wasm via brotli to {}".format(wasm_file_name))
     result = subprocess.run(['brotli', WASM_BUILD_NAME, '-o', wasm_file_name])
 
-js_file_name = 'canonic.{}.js'.format(BUILD_SUFFIX)
+# Calculate the md5 hash of the js file
+js_file_md5 = hashlib.md5(open(OUTPUT_DIR / JS_BUILD_NAME, 'rb').read()).hexdigest()
+
+# Copy the js file to the output dir
+js_file_name = 'canonic.{}.{}.js'.format(BUILD_SUFFIX, js_file_md5)
 print("copying '{}' to '{}'".format(JS_BUILD_NAME, js_file_name))
 shutil.copy(OUTPUT_DIR / JS_BUILD_NAME, OUTPUT_DIR / js_file_name)
 
@@ -201,8 +208,6 @@ if NO_DEPLOY not in sys.argv:
 
     print("Invalidating cloudfront content")
     invalidation_id = create_invalidation(['/{}'.format(SITEMAP_FILE_NAME),
-                                           '/{}'.format(wasm_file_name),
-                                           '/{}'.format(js_file_name),
                                            '/qtloader.js'], AWS_CF_DISTRIBUTION_ID)
 
     print("invalidation_id:", invalidation_id)

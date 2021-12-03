@@ -45,7 +45,7 @@
 //         containerElements : [$("container-id")];
 //     }
 //     var qtLoader = QtLoader(config);
-//     qtLoader.loadEmscriptenModule("applicationName");
+//     qtLoader.loadEmscriptenModule("jsFileName", "wasmFileName");
 //
 // External mode.usage:
 //
@@ -62,7 +62,7 @@
 //        }
 //     }
 //     var qtLoader = QtLoader(config);
-//     qtLoader.loadEmscriptenModule("applicationName");
+//     qtLoader.loadEmscriptenModule("jsFileName", "wasmFileName");
 //
 // Config keys
 //
@@ -107,7 +107,7 @@
 // canLoadQt : bool
 //      Reports if WebAssembly and WebGL are supported. These are requirements for
 //      running Qt applications.
-// loadEmscriptenModule(applicationName)
+// loadEmscriptenModule(jsFileName, wasmFileName)
 //      Loads the application from the given emscripten javascript module file and wasm file
 // status
 //      One of "Created", "Loading", "Running", "Exited".
@@ -329,7 +329,7 @@ function QtLoader(config)
         });
     }
 
-    function loadEmscriptenModule(applicationName) {
+    function loadEmscriptenModule(jsFileName, wasmFileName) {
 
         // Loading in qtloader.js goes through four steps:
         // 1) Check prerequisites
@@ -357,26 +357,26 @@ function QtLoader(config)
 
         // Fetch emscripten generated javascript runtime
         var emscriptenModuleSource = undefined
-        var emscriptenModuleSourcePromise = fetchText(applicationName + ".js").then(function(source) {
+        var emscriptenModuleSourcePromise = fetchText(jsFileName).then(function(source) {
             emscriptenModuleSource = source
         });
 
         // Fetch and compile wasm module
         var wasmModule = undefined;
-        var wasmModulePromise = fetchCompileWasm(applicationName + ".wasm").then(function (module) {
+        var wasmModulePromise = fetchCompileWasm(wasmFileName).then(function (module) {
             wasmModule = module;
         });
 
         // Wait for all resources ready
         Promise.all([emscriptenModuleSourcePromise, wasmModulePromise]).then(function(){
-            completeLoadEmscriptenModule(applicationName, emscriptenModuleSource, wasmModule);
+            completeLoadEmscriptenModule(jsFileName, wasmFileName, emscriptenModuleSource, wasmModule);
         }).catch(function(error) {
             self.error = error;
             setStatus("Error");
         });
     }
 
-    function completeLoadEmscriptenModule(applicationName, emscriptenModuleSource, wasmModule) {
+    function completeLoadEmscriptenModule(jsFileName, wasmFileName, emscriptenModuleSource, wasmModule) {
 
         // The wasm binary has been compiled into a module during resource download,
         // and is ready to be instantiated. Define the instantiateWasm callback which
@@ -471,7 +471,7 @@ function QtLoader(config)
                 setStatus("Error");
                 return;
             }
-            loadEmscriptenModule(applicationName);
+            loadEmscriptenModule(jsFileName, wasmFileName);
         };
 
         publicAPI.exitCode = undefined;

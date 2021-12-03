@@ -120,6 +120,12 @@
             var canvas = document.querySelector("#qtcanvas");
             var simulateEventsTimer;
 
+            // These are populated with values on production
+            var JS_FILE_MD5_HASH_RELEASE = "";
+            var JS_FILE_MD5_HASH_DEBUG = "";
+            var WASM_FILE_MD5_HASH_RELEASE = "";
+            var WASM_FILE_MD5_HASH_DEBUG = "";
+
             function hideSpinner() {
                 spinner.style.opacity = 0;
                 spinner.style.pointerEvents = "none";
@@ -218,14 +224,32 @@
                 });
 
                 var localStorage = window.localStorage;
-                var canonic_build = localStorage.getItem('canonic-build');
+                var canonicBuild = localStorage.getItem('canonic-build');
 
-                if(canonic_build === null)
+                if(canonicBuild === null)
                 {
-                    canonic_build = 'release'
+                    canonicBuild = 'release'
                 }
 
-                qtLoader.loadEmscriptenModule('canonic.' + canonic_build);
+                var jsFileName = 'canonic.' + canonicBuild;
+                var wasmFileName = 'canonic.' + canonicBuild;
+                switch(canonicBuild)
+                {
+                    case 'release':
+                    {
+                        jsFileName = jsFileName + '.' + JS_FILE_MD5_HASH_RELEASE + '.js';
+                        wasmFileName = wasmFileName + '.' + WASM_FILE_MD5_HASH_RELEASE + '.wasm';
+                        break;
+                    }
+                    case 'debug':
+                    {
+                        jsFileName = jsFileName + '.' + JS_FILE_MD5_HASH_DEBUG + '.js';
+                        wasmFileName = wasmFileName + '.' + WASM_FILE_MD5_HASH_DEBUG + '.wasm';
+                        break;
+                    }
+                }
+
+                qtLoader.loadEmscriptenModule(jsFileName, wasmFileName);
             }
             window.canonic = new Object();
             window.canonic.__hideSpinner = hideSpinner
