@@ -7,8 +7,6 @@
   Canonic
 </h1>
 
----
-
 <h3 align="center">
     Opensource QML browser
 </h3>
