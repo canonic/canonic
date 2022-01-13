@@ -1,0 +1,67 @@
+# Hosting QML online
+
+Hosting QML files online is mostly the same as hosting any other types of static files on the web.
+
+Simply copy your .qml files to your HTTP server, or your hosting provider, the same as you would do with any .html you host online.
+
+## Free hosting via GitHub
+
+You can host your QML directly via GitHub if you don't have access to private hosting. Just upload your qml files directly to a public repository and load the raw url in Canonic.
+
+Make sure it is the **raw** url which you open in Canonic not the normal html url. You get the raw url by clicking the **raw** button when viewing a file in GitHub:
+
+Here's a normal and raw url to show the difference: 
+| type   | url                                                                           |
+|--------|-------------------------------------------------------------------------------|
+| normal | https://github.com/username/reponame/blob/main/path/to/qml-file.qml           |
+| raw    | https://raw.githubusercontent.com/username/reponame/main/path/to/qml-file.qml |
+
+
+## Things to look out for:
+
+### 1- Wrong content-type or file extension
+
+Canonic will try to render any file it loads from the web as QML if the file name ends with `.qml` or if it has a `Content-Type` of `text/qml`. 
+
+Since `text/qml` is not a standard content type recognised by most browsers your HTTP server will probably not set this correctly for you by default. Just something to keep in mind.
+
+
+### 2 - Missing qmldir file
+
+If you do not have a **qmldir** file next to your QML files then relative type importing and relative module importing will not work!
+
+qmldir files are simple text files that come in two forms:
+- [QML Directory Listing qmldir Files](https://doc.qt.io/qt-6/qtqml-syntax-directoryimports.html#directory-listing-qmldir-files)
+- [QML module definition files](https://doc.qt.io/qt-6/qtqml-modules-qmldir.html)
+
+Generally it's recommended to always have a qmldir file next to your qml files, even if you only have one qml file and it doesn't do any relative importing.
+
+
+### 3 - Relative module imports
+
+Not all types of module import statements work when loading QML over a network.
+
+The import statement is only network transparent if it has an "as" clause.
+
+More specifically:
+- import "dir" only works on local file systems
+- import libraryUri only works on local file systems
+- import "dir" as D works network transparently
+- import libraryUrl as U works network transparently
+
+Checkout the limitations section of the [qml network transparency](https://doc.qt.io/qt-6/qtqml-documents-networktransparency.html#limitations) docs to find out more.
+
+### 4 - Weird Module import errors?
+
+Getting weird errors when trying to import a module over the network? 
+
+Try adding a `plugins.qmltypes` file into the module. 
+
+It doesn't need to contain anything and honestly I'm not sure why it's required in WASM but not native network loading but it must please the Qt gods in one way or another so I recommend always including it.
+
+---
+
+> If your still having trouble loading your QML files in Canonic feel free to let us know in the [discord group](https://discord.com/invite/YcsEwdaNbR) and someone will be around to help.
+
+## Next
+[Part 5 - Creating links](/creating-links.mdx)

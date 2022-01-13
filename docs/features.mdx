@@ -1,0 +1,48 @@
+# Features
+
+### Light and Dark theme
+
+![Image](https://raw.githubusercontent.com/canonic/canonic/main/assets/images/canonic_themes_screenshot.png)
+
+### Views
+
+Canonic has a concept of **Views**. A view is esentially a visualiser that takes the file or stream resource loaded by the browser and is responsible for rendering it.
+
+By default Canonic will pick the most specific **View** possible available for a file / content-type but you can change view by clicking the Prism icon on the right side of the address bar.
+
+The views Canonic currently supports are:
+- QML View
+- JSON View
+- Raw source View
+- HTMLView (just tells you HTML is not supported)
+
+The plan is to make it possible for people to write their own views in the near future.
+
+### Window or Item root item support
+
+Normally with Qt QML you would use either a `Window` or a `Item` as the root item for your QML UI depending on the type of Qt application you chose.
+
+Canonic supports both root items types though it is recommended to use an `Item` for performance reasons.
+
+### Partial content sandboxing
+Canonic separates the rendering and browser logic to a degree (though more needs to be done!)
+
+Canonic maintains two `QQuickRenderControl` instances that each manage their own `QQmlEngine` instances and contexts. Both instances render to hidden virtual windows that are then composited together using `GLSL`. Using this structure Canonic is able to split the main browser UI from the QML content loaded from the web to a degree.
+
+This is why you network loaded QML resources cannot access any of the browser UI QML items via looping through `parent` elements. Behnind the curtain they are two separate offscreen windows!
+
+That said there is still a lot of work required to make Canonic fully secure when running natively. Canonic is currently missing most of the sandboxing features offered by modern web browsers (CORS, separate processes, file system protection, permissions, etc) as well as additional logic to handle QMLs access to C++ land. This is part of the reason why Canonic is currently only available via WebAssembly as WASM provides a safe sandbox in which QML browser technology can be explored.
+
+## Web app specific features:
+
+### History bread crumbs
+
+As you browse pages Canonic will update your host browsers history to stay in sync. It will also update your host browsers url in case you want to share the link to the current page your on.  
+
+### CORS proxying
+
+All http(s) requests are proxied over through a CORS proxy to get around CORS issues. 
+
+In the future websites that add CORS support for www.canonic.com will not be proxied to increase performance and reduce load on our proxy server.
+
+Hopefully qt WASM will get around to supporting the proxy logic in the `QNetworkManager` class eventually so that better proxy systems can be used.
