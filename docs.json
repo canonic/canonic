@@ -15,14 +15,14 @@
     "sidebar": [
         [
             "Overview",
-            "/index.mdx"
+            "/index"
         ],
         [
             "Using Canonic",
             [
                 [
                     "Features",
-                    "/features.mdx"
+                    "/features"
                 ]
             ]
         ],
@@ -31,31 +31,31 @@
             [
                 [
                     "1. Getting started with QML",
-                    "/getting-started-with-qml.mdx"
+                    "/getting-started-with-qml"
                 ],
                 [
                     "2. What is QML",
-                    "/what-is-qml.mdx"
+                    "/what-is-qml"
                 ],
                 [
                     "3. QML vs HTML",
-                    "/qml-vs-html.mdx"
+                    "/qml-vs-html"
                 ],
                 [
                     "4. Hosting QML online",
-                    "/hosting-qml-online.mdx"
+                    "/hosting-qml-online"
                 ],
                 [
                     "5. Creating links",
-                    "/creating-links.mdx"
+                    "/creating-links"
                 ],
                 [
                     "6. Share your site!",
-                    "/share-your-site.mdx"
+                    "/share-your-site"
                 ],
                 [
                     "7. Extra learning resources",
-                    "/extra-learning-resources.mdx"
+                    "/extra-learning-resources"
                 ]
             ]
         ],
@@ -64,13 +64,13 @@
             [
                 [
                     "API Reference",
-                    "/api-reference.mdx"
+                    "/api-reference"
                 ]
             ]
         ],
         [
             "FAQ",
-            "/faq.mdx"
+            "/faq"
         ],
         [
             "Community",
