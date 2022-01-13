@@ -147,10 +147,14 @@ namespace WebAPI {
 
                 if (key == "external" && value == "yes")
                 {
+                    // Open the url in the users default browser
                     QDesktopServices::openUrl(url);
+                    return;
                 }
             }
         }
+
+        this->getLocation()->setHref(url);
     }
 
     void Window::handleWindowResize()
