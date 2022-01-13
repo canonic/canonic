@@ -1,0 +1,51 @@
+# Creating Links
+
+There are no **\<a\>** tags or **hrefs** in QML like with HTML so we need a differnet method of linking to other pages.
+
+The simplest way to do this is by setting the value of `window.location.href` via Javascript. 
+```javascript
+// SetWindowLocationHref.qml
+import QtQuick
+import QtQuick.Controls as QtControls
+
+QtControls.Button {
+    text: 'Click Me'
+    anchors.centerIn: parent
+
+    // Change url on click
+    onClicked: window.location.href = "https://discord.gg/YcsEwdaNbR"
+}
+```
+___[View in Canonic](https://www.canonic.com/#https://raw.githubusercontent.com/canonic/canonic/main/docs/examples/SetWindowLocationHref.qml)___
+
+You can also trivially make a component that changes the window location when you click on some text if what you are after is a replacement for **\<a\>** tags.
+
+## Open a link in the host / default browser
+
+You may want to open a link using the users host browser instead of Canonic if you are linking to a HTML website for example.
+
+Canonic implements the [Window.open](https://developer.mozilla.org/en-US/docs/Web/API/Window/open) browser method for just this use case. 
+Just create a `onClicked` handler for any item with the `clicked` signal then use window.open to load a new url.
+
+Make sure to pass `"external=yes"` for the third argument as it tells Canonic that you want to open the provided url with the users default desktop browser.
+
+```javascript
+// WindowOpen.qml
+import QtQuick
+import QtQuick.Controls as QtControls
+
+QtControls.Button {
+    text: 'Click Me'
+    anchors.centerIn: parent
+
+    // Open the Canonic discord link 
+    onClicked: window.open("https://discord.gg/YcsEwdaNbR", "", "external=yes")
+}
+```
+___[View in Canonic](https://www.canonic.com/#https://raw.githubusercontent.com/canonic/canonic/main/docs/examples/WindowOpen.qml)___
+
+## Next
+
+Before we take a look at how to host our QML files on the internet for Canonic lets take a high level look at how QML compares to the langauge of the web - HTML.
+
+[Part 6 - Share your site](/share-your-site.mdx)

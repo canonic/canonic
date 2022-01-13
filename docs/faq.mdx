@@ -1,0 +1,34 @@
+# FAQ
+
+## Will Canonic be made available as a native desktop app?
+
+Yes, but the security model needs work before I feel it can be respoinsiblly released as a native app.
+
+You can always build it your self from GitHub until then. Just clone, load the project into QtCreator and click build. 
+
+## Why does Canonic change my scrolling behavour?
+
+This is a known issue with Qt WASM and seems to be a result of MacOS, as usual, being a special snowflake. 
+
+See https://bugreports.qt.io/browse/QTBUG-69004 for details.
+
+## Can Canonic load it's self for infinite browser recursion?
+
+No, Canonic does not understand HTML or WASM so it cannot load itself.
+
+## How do I find QML websites?
+
+See the [Share your site docs](/share-your-site.mdx) page
+
+## Why not just use Qt WASM?
+
+Qt's (relatively recent) support for WASM has made it possible to bring QML (and Qt in general) to the web. It is awesome (It is what made the Canonic web app possible) but it has a few issues:
+- Compiling Qt applications to WASM for the first time is a PITA. Unless you have a spare week and a VM I wouldn't recommend it.
+- WASM binary size is large. It's easy to hit 20 - 40 MB. Canonic's WASM web app sits at about 27 MB (6.7 Mb compressed) and that's after some carefull trimming of the dependencies. The lowest I've seen is around 4 MB compressed for the most basic Qt no gui app. All in all a fast CDN is pretty much required if you don't want users with slower connections to bounce.
+  
+  And Remember the first 16 MB is probably mostly the same for every QML app. If QML is ever going to be widely used on the web we're going to need a way to reduce or handle this shared code. 
+
+Canonic allows you to skip all of the above and just host the qml files you need. 
+
+In the future if there is interest Canonic could also be offered as a whitelable CDN js library (canonic.js?) that you can import into your own HTML web app for QML support. 
+Having a single CDN library would increase the chances of a user already having it cached from another site making your website load much faster.

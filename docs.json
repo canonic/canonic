@@ -1,0 +1,89 @@
+{
+    "name": "Canonic",
+    "theme": "#1CFE98",
+    "favicon": "https://www.canonic.com/assets/images/favicon.svg",
+    "logo": "https://www.canonic.com/assets/images/favicon.svg",
+    "logoDark": "https://www.canonic.com/assets/images/favicon.svg",
+    "socialPreview": "https://www.canonic.com/assets/images/canonic_open_graph_image__01_10_2021.png",
+    "noindex": false,
+    "navigation": [
+        [
+            "Try",
+            "https://www.canonic.com"
+        ]
+    ],
+    "sidebar": [
+        [
+            "Overview",
+            "/index.mdx"
+        ],
+        [
+            "Using Canonic",
+            [
+                [
+                    "Features",
+                    "/features.mdx"
+                ]
+            ]
+        ],
+        [
+            "How to QML",
+            [
+                [
+                    "1. Getting started with QML",
+                    "/getting-started-with-qml.mdx"
+                ],
+                [
+                    "2. What is QML",
+                    "/what-is-qml.mdx"
+                ],
+                [
+                    "3. QML vs HTML",
+                    "/qml-vs-html.mdx"
+                ],
+                [
+                    "4. Hosting QML online",
+                    "/hosting-qml-online.mdx"
+                ],
+                [
+                    "5. Creating links",
+                    "/creating-links.mdx"
+                ],
+                [
+                    "6. Share your site!",
+                    "/share-your-site.mdx"
+                ],
+                [
+                    "7. Extra learning resources",
+                    "/extra-learning-resources.mdx"
+                ]
+            ]
+        ],
+        [
+            "Developer",
+            [
+                [
+                    "API Reference",
+                    "/api-reference.mdx"
+                ]
+            ]
+        ],
+        [
+            "FAQ",
+            "/faq.mdx"
+        ],
+        [
+            "Community",
+            [
+                [
+                    "Canonic on GitHub",
+                    "https://github.com/canonic/canonic"
+                ],
+                [
+                    "Canonic on Discord",
+                    "https://discord.com/invite/YcsEwdaNbR"
+                ]
+            ]
+        ]
+    ]
+}
