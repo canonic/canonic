@@ -59,6 +59,7 @@ bool HostViewport::event(QEvent *e)
         switch(e->type())
         {
             case QEvent::Type::MouseButtonRelease:
+            case QEvent::Type::TabletRelease:
             case QEvent::Type::Wheel:
             {
                 this->m_forwardEvents = false;
