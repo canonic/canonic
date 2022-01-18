@@ -331,7 +331,7 @@ Metonym.ThemedItem {
                 id: dropArea
                 anchors.fill: parent
 
-                onDropped: {
+                onDropped: (drop) => {
                     if(drop.urls.length > 0)
                     {
                         window.location.href = drop.urls[0]

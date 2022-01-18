@@ -262,6 +262,19 @@ bool MainWindow::event(QEvent *event)
         return true;
     }
 
+    // Handle remaining events by type
+    switch (event->type())
+    {
+        case QEvent::DragEnter:
+        case QEvent::DragLeave:
+        case QEvent::DragMove:
+        case QEvent::Drop:
+            QCoreApplication::sendEvent(m_hostViewport, event);
+            return true;
+
+        default: break;
+    }
+
     return QWindow::event(event);
 }
 
