@@ -258,8 +258,12 @@ namespace WebAPI {
                 activeViewIndex++;
             }
 
-            if(reply->url().path().endsWith(".qml", Qt::CaseInsensitive) ||
-                (contentType.isValid() && contentType.toString().contains("text/qml")))
+            // Since most http servers do not use text/qml as they are unaware
+            // of the QML content type we need to do some heuristics to work out
+            // if a document is actually a QML document as it's content type may
+            // be wrong.
+            bool fuzyQML = reply->url().path().endsWith(".qml", Qt::CaseInsensitive) and !(contentType.isValid() and contentType.toString().contains("text/html"));
+            if(fuzyQML or (contentType.isValid() && contentType.toString().contains("text/qml")))
             {
                 View *qmlDocumentView = new QMLView{};
                 this->m_mainWindow->appendView(qmlDocumentView);
