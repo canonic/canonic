@@ -51,8 +51,11 @@ QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operat
     // Proxy http and https requests to avoid CORS issues
     if(networkRequest.url().scheme().contains("http"))
     {
-        if(!url.startsWith("https://www.canonic.com")) {
-            networkRequest.setUrl(QUrl("https://proxy.canonic.com/proxy/" + networkRequest.url().toString()));
+        if(!(url.startsWith("https://app.canonic.com") ||
+             url.startsWith("https://playground.canonic.com") ||
+             url.startsWith("https://www.canonic.com")))
+        {
+            networkRequest.setUrl(QUrl("https://app.canonic.com/proxy/" + networkRequest.url().toString()));
             networkRequest.setRawHeader(QByteArray("x-requested-with"), "canonic");
         }
     }
