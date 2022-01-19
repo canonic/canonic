@@ -32,7 +32,7 @@
 
 [Canonic](https://www.canonic.com/) is an experimental QML web browser developed in the [Qt framework](https://www.qt.io/) and licensed under GPL3. 
 
-A live [WebAssembly](https://webassembly.org/) version of the browser is available to try at https://www.canonic.com/. 
+A live [WebAssembly](https://webassembly.org/) version of the browser is available to try at https://app.canonic.com/. 
 
 ## Worlds first browser within a browser
 
