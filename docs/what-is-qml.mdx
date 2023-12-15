@@ -8,7 +8,7 @@ QML is used in many different environments. From desktop, to mobile and even emb
 
 Bellow is are a few examples of QML in the wild:
 - [Adobe Substance designer](https://www.adobe.com/uk/products/substance3d-designer.html)
-- [Blizard's Battle.net launcher](https://www.blizzard.com/en-gb/apps/battle.net/desktop)
+- [Blizzard's Battle.net launcher](https://www.blizzard.com/en-gb/apps/battle.net/desktop)
 - [KDE's Plasma Desktop interface](https://develop.kde.org/docs/plasma/widget/qml/)
 - [Mercedes-Benz in-car Infotainment Systems (MBUX)](https://mbition.io/)
 - [Ubuntu mobile](https://ubuntu-touch.io/)
@@ -35,13 +35,13 @@ ___[View in Canonic](https://www.canonic.com/#https://raw.githubusercontent.com/
 > 
 > If you are browsing these docs using a normal HTML browser it is worth taking a momement to explain how to view and play with the examples you will come across during this tutorial series.
 > 
-> All QML examples that you will come across in these docs are stored [here](https://github.com/canonic/canonic/tree/main/docs/examples) in GitHub. Since these files are publically hosted **they can be viewed with Canonic!**. Just open Canonic and enter the url of the raw qml file for the example you want to view into the addressbar.
+> All QML examples that you will come across in these docs are stored [here](https://github.com/canonic/canonic/tree/main/docs/examples) in GitHub. Since these files are publicly hosted **they can be viewed with Canonic!** Just open Canonic and enter the url of the raw qml file for the example you want to view into the addressbar.
 > 
 > For the above `HelloWorld.qml` example you would enter https://raw.githubusercontent.com/canonic/canonic/main/docs/examples/HelloWorld.qml into Canonic's address bar.
 > 
 > Or just click the **View in Canonic** button under each example.
 > 
-> Note you can also copy paste any example into the [Canonic Playground editor](https://playground.canonic.com) for an interactive live preview
+> Note: you can also copy paste any example into the [Canonic Playground editor](https://playground.canonic.com) for an interactive live preview.
 ---
 
 The QML syntax follows the general rule of:
@@ -56,7 +56,7 @@ Where:
 - `<propertyName>` is the name of a property of that component type
 - `<propertyValue>` is simply some kind of JS value like a number or a string.
 
-Almost every QML file will also contain `import QtQuick` before `<ComponentName>` just like with the simple [HelloWorld.qml](#what-does-qml-look-like) example above. This is a module import statement which is used for importing QML component types defined in other files (among other things). You can also have an optional version number after the module name. There are lots of different modules that come with Qt by default for things like viewing 3D content, multimedia, charts, etc but the `QtQuick` module contains all of the most basic QML components that you will be using all the time to begin with like `Text`, `Rectangle`, `Image`, `MouseArea`, etc.
+Almost every QML file will also contain `import QtQuick` before `<ComponentName>` just like with the simple [HelloWorld.qml](#what-does-qml-look-like) example above. This is a module import statement which is used for importing QML component types defined in other files (among other things). You can also have an optional version number after the module name. There are lots of different modules that come with Qt by default for things like viewing 3D content, multimedia, charts, etc. but the `QtQuick` module contains all of the most basic QML components that you will be using all the time to begin with like `Text`, `Rectangle`, `Image`, `MouseArea`, etc..
 
 If you've been reading about QML online you may have actually seen the terms `QtQuick` and `QML` used interchangeably but as you can now see there is a difference between the two. **QML** is the language and **QtQuick** is a module that happens to get used almost all of the time.
 
@@ -83,8 +83,8 @@ Rectangle {
     Image {
         id: image
 
-        // Position the image in the horizontal centre of the 
-        // parent element using aboslute positioning
+        // Position the image in the horizontal center of the 
+        // parent element using absolute positioning
         x: (parent.width - width)/2
         
         // Position the image in the vertical center of the
@@ -104,7 +104,7 @@ Rectangle {
     Text {
         // un-named element
         
-        // Position the text so that it's top is anchored to
+        // Position the text so that its top is anchored to
         // the bottom of the image element
         anchors.top: image.bottom
         
@@ -122,15 +122,15 @@ Notice how we are able to give unique id's to elements and then reference those 
 
 For instance the `Text` child element uses `anchors.top: image.bottom` to position the itself below the `Image` element with the id `image`. Making use of **anchors** like this is a common way to position elements relative to other elements in a QML scene. 
 
-It is also possible to position an element by manually setting it's `x` or `y` property. You can see this in the example in the case of the `image` element which binds it's `x` property to `(parent.width - width)/2`.
+It is also possible to position an element by manually setting its `x` or `y` property. You can see this in the example in the case of the `image` element which binds its `x` property to `(parent.width - width)/2`.
 
 ### A note on Bindings
 
 When a property is given a value using the `<property>: <value>` syntax, like we see in all the properties in the above example, we call this a property binding.
 
-This is different to setting the value for a variable like with other programming langauges as a property binding will be re-evaluated whenever one of it's referenced values changes.
+This is different to setting the value for a variable like with other programming langauges as a property binding will be re-evaluated whenever one of its referenced values changes.
 
-For example the `x: (parent.width - width)/2` property binding for the `image` element references the `width` property of itself and it's parent. if either the parent or `image` element's `width` property changes then the binding will be re-evalutated, causing the `image` element to always be horizontally centred inside it's parent!
+For example the `x: (parent.width - width)/2` property binding for the `image` element references the `width` property of itself and its parent. If either the parent or `image` element's `width` property changes then the binding will be re-evalutated, causing the `image` element to always be horizontally centered inside its parent!
 
 #### Binding loops
 
